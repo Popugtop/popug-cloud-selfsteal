@@ -50,7 +50,7 @@
 ## 🧭 Мастер установки
 
 ```
-  ┌  selfsteal 0.2.2  ·  install  · step 3/6
+  ┌  selfsteal 0.3.0  ·  install  · step 3/6
   │
   ◇  Domain     se1.cdn.popug.cloud
   ◇  DNS        ✓ 203.0.113.10 — this server
@@ -73,7 +73,7 @@
 |---|---|
 | **Domain** | домен проверяется сразу; в подсказке — публичный IP сервера, на который должна указывать A-запись |
 | **DNS check** | «проверить сейчас» или «пропустить». Проверка идёт прямо в окне; если запись не та — видно почему, и можно **проверить ещё раз**, **сменить домен** или **продолжить всё равно** |
-| **Template** | выбор стрелками; шаблон, подходящий по имени (`*.cdn.*` → `cdn`, `*.api.*` → `api`, `*.s3.*` → `storage`, …), выбран заранее |
+| **Template** | выбор стрелками; шаблон, подходящий по имени (`*.cdn.*` → `cdn`, `*.api.*` → `api`, `*.s3.*` → `storage`, `*.telemetry.*` → `telemetry`, …), выбран заранее |
 | **Port** | loopback-порт для `target` в Xray, по умолчанию `8443`; если он занят — мастер сразу скажет кем |
 | **E-mail** | необязательно, для писем Let's Encrypt об истечении сертификата |
 | **Options** | правила ufw · включить ufw · staging-сертификат · предложить установщик ноды в конце |
@@ -103,6 +103,7 @@ bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/lates
 |---|---|---|---|
 | `cdn` | ноды | `se1.cdn.popug.cloud` | фирменная 404 на `/`, статика в `/assets/` |
 | `api` | ноды | `pl1.api.popug.cloud` | `{"service":"popug-api","status":"ok",…}`, JSON 401/404 |
+| `telemetry` | ноды | `de1.telemetry.popug.cloud` | `{"service":"popug-telemetry","status":"ok",…}`; приём событий `/v1/events` и т.п. — `401` без ключа проекта, ничего не сохраняется |
 | `storage` | ноды | `us1.s3.popug.cloud` | XML в стиле S3: `AccessDenied`, `NoSuchBucket`, `InvalidBucketName` |
 | `registry` | ноды | `ru1.registry.popug.cloud` | короткая страница, `401` как у registry на `/v2/` |
 | `default` | ноды | всё остальное | нейтральная страница «you have reached a Popug Cloud endpoint» |
@@ -112,7 +113,7 @@ bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/lates
 | `console` | основной сервер | `console.popug.cloud`, `auth.popug.cloud` | страница входа и «private beta», форма никуда не отправляет |
 
 Имена: `<страна><n>.<роль>.popug.cloud` — `cdn`: se1, se2, cz1, nl1, lv1, ee1, de1 · `api`: pl1, sg1 ·
-`s3`: us1, tr1 · `registry`: ru1. Страницы основного сервера добавляются в уже работающий Caddy через `prepare`
+`s3`: us1, tr1 · `registry`: ru1 · `telemetry`: по желанию. Страницы основного сервера добавляются в уже работающий Caddy через `prepare`
 (см. [DEPLOY.md §4](DEPLOY.md#4-the-main-domain-on-a-server-where-caddy-apt-already-runs)).
 
 Всё статическое: без бэкенда, внешних шрифтов / CDN / аналитики, без JavaScript и без форм, которые что-то отправляют.
@@ -183,7 +184,7 @@ selfsteal prepare             только распаковать шаблон �
 ## 🔄 Обновление
 
 На ноде: `selfsteal update` (или **Update** в меню) — скачивает установщик последнего релиза и заново применяет
-сайт; домен, шаблон, порт и сертификаты сохраняются. Конкретная версия: `--to 0.2.2`. На серверах с `prepare`
+сайт; домен, шаблон, порт и сертификаты сохраняются. Конкретная версия: `--to 0.3.0`. На серверах с `prepare`
 перезапусти `prepare` и сделай reload Caddy. Подробнее — [DEPLOY.md §5](DEPLOY.md#5-updating-templates-on-all-servers).
 
 ## ♻️ Переустановка и удаление

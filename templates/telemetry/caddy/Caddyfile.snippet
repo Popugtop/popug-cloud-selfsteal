@@ -1,0 +1,65 @@
+# telemetry ingestion endpoint
+root * /var/www/html
+
+header {
+	-Server
+	Strict-Transport-Security "max-age=31536000"
+	X-Content-Type-Options "nosniff"
+	X-Request-Id "{http.request.uuid}"
+}
+
+@root path /
+handle @root {
+	header Cache-Control "no-store"
+	header Content-Type "application/json; charset=utf-8"
+	respond `{"service":"popug-telemetry","status":"ok","version":"@@VERSION@@"}` 200
+}
+
+@health path /health /healthz
+handle @health {
+	header Cache-Control "no-store"
+	header Content-Type "application/json; charset=utf-8"
+	respond `{"status":"ok"}` 200
+}
+
+# browsers send a preflight before posting events
+@preflight {
+	method OPTIONS
+	path /v1/*
+}
+handle @preflight {
+	header Access-Control-Allow-Origin "*"
+	header Access-Control-Allow-Methods "POST, OPTIONS"
+	header Access-Control-Allow-Headers "Authorization, Content-Type, Content-Encoding"
+	header Access-Control-Max-Age "86400"
+	respond 204
+}
+
+# ingestion needs a project key; nothing is accepted or stored here
+@ingest path /v1/events /v1/batch /v1/metrics /v1/logs /v1/traces
+handle @ingest {
+	header Cache-Control "no-store"
+	header Content-Type "application/json; charset=utf-8"
+	header Access-Control-Allow-Origin "*"
+	header WWW-Authenticate `Bearer realm="popug-telemetry"`
+	respond `{"error":{"code":"unauthorized","message":"Missing or invalid project key."}}` 401
+}
+
+@v1 path /v1 /v1/*
+handle @v1 {
+	header Cache-Control "no-store"
+	header Content-Type "application/json; charset=utf-8"
+	respond `{"error":{"code":"not_found","message":"Unknown endpoint."}}` 404
+}
+
+@files path /robots.txt /favicon.svg
+handle @files {
+	header Cache-Control "public, max-age=86400"
+	file_server
+}
+
+handle {
+	header Cache-Control "no-store"
+	header Content-Type "application/json; charset=utf-8"
+	respond `{"error":{"code":"not_found","message":"The requested resource does not exist."}}` 404
+}

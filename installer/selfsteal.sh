@@ -825,6 +825,7 @@ suggest_template() {
   case "$1" in
     *.cdn.*|cdn.*) echo cdn ;;
     *.api.*|api.*) echo api ;;
+    *.telemetry.*|telemetry.*) echo telemetry ;;
     *.s3.*|s3.*|*.storage.*|storage.*) echo storage ;;
     *.registry.*|registry.*) echo registry ;;
     docs.*|*.docs.*) echo docs ;;

@@ -28,18 +28,18 @@ Do this on your machine, not on a server. Node.js 22.23 or newer (Astro requirem
 npm install
 node tools/build-release.mjs --repo Popugtop/popug-cloud-selfsteal
 ls release/
-# template-*.tar.gz (9 files), SHA256SUMS, selfsteal.sh
+# template-*.tar.gz (10 files), SHA256SUMS, selfsteal.sh
 ```
 
-`release/selfsteal.sh` is the installer with the version, repository and the SHA256 of all nine archives
+`release/selfsteal.sh` is the installer with the version, repository and the SHA256 of all ten archives
 embedded. The archives are reproducible: building twice gives identical files.
 
 Publish with the GitHub CLI (or upload the same files in the web UI):
 
 ```bash
-git tag v0.2.2 && git push origin v0.2.2
-gh release create v0.2.2 release/* --repo Popugtop/popug-cloud-selfsteal \
-  --title "v0.2.2" --notes "Templates and installer v0.2.2"
+git tag v0.3.0 && git push origin v0.3.0
+gh release create v0.3.0 release/* --repo Popugtop/popug-cloud-selfsteal \
+  --title "v0.3.0" --notes "Templates and installer v0.3.0"
 ```
 
 Rules:
@@ -50,7 +50,7 @@ Rules:
 * Never rebuild and replace files of a published tag: nodes pin the hashes of that exact build.
   Changed something? Bump the version, rebuild, publish a new tag.
 * Sanity check after publishing, from any machine:
-  `curl -sL https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.2.2/selfsteal.sh | sha256sum`
+  `curl -sL https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.3.0/selfsteal.sh | sha256sum`
   must equal the `selfsteal.sh` line of `SHA256SUMS`.
 
 Before the first `git push`, keep working files out of the repository. A suggested `.gitignore` already
