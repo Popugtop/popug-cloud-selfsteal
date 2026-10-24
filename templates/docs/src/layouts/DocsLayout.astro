@@ -1,0 +1,89 @@
+---
+import Layout from '@popug/design/Layout.astro';
+import Logo from '@popug/design/Logo.astro';
+import { links } from '@popug/design/site.ts';
+import { groups } from '../nav';
+interface Props { title: string; description: string; current: string }
+const { title, description, current } = Astro.props;
+const year = new Date().getFullYear();
+---
+<Layout title={`${title} — Popug Cloud Docs`} description={description} chrome={false}>
+  <header class="top">
+    <div class="in">
+      <a class="brand" href="/" aria-label="Popug Cloud Docs"><Logo size={26} /><span class="tag">Docs</span></a>
+      <input class="search" type="search" placeholder="Search documentation" aria-label="Search documentation" />
+      <nav class="tl">
+        <a href={links.status}>Status</a>
+        <a class="btn btn-sm btn-primary" href={links.console}>Console</a>
+      </nav>
+    </div>
+  </header>
+  <div class="shell">
+    <details class="mnav"><summary>Menu</summary>
+      {groups.map((g) => (<div class="grp"><h4>{g.title}</h4>{g.items.map((i) => <a href={i.h} class:list={{ on: i.h === current }}>{i.t}</a>)}</div>))}
+    </details>
+    <aside class="side">
+      {groups.map((g) => (<div class="grp"><h4>{g.title}</h4>{g.items.map((i) => <a href={i.h} class:list={{ on: i.h === current }}>{i.t}</a>)}</div>))}
+    </aside>
+    <main class="prose"><slot /></main>
+  </div>
+  <footer class="foot">
+    <div class="in">
+      <span>© {year} Popug Cloud, Inc.</span>
+      <span class="fl"><a href={links.home}>popug.cloud</a><a href={links.status}>Status</a><a href={links.console}>Console</a></span>
+    </div>
+  </footer>
+</Layout>
+
+<style is:global>
+  .top { position: sticky; top: 0; z-index: 20; background: rgba(252,251,248,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .in { max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 24px; height: 56px; }
+  .brand { display: inline-flex; align-items: center; gap: 12px; }
+  .tag { font: 500 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px; border-radius: 99px; background: var(--green-soft); color: var(--green-ink); }
+  .search { flex: 1; max-width: 420px; margin: 0 auto; height: 36px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: var(--surface); font: 14px var(--font-sans); color: var(--ink); }
+  .search::placeholder { color: var(--ink-3); }
+  .tl { margin-left: auto; display: flex; align-items: center; gap: 20px; font-size: 14.5px; font-weight: 500; }
+  .shell { max-width: 1180px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 56px; min-height: 70vh; }
+  .side { position: sticky; top: 56px; align-self: start; padding: 32px 0; display: flex; flex-direction: column; gap: 22px; }
+  .grp h4 { font: 500 11.5px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+  .grp a { display: block; padding: 6px 10px; margin-left: -10px; border-radius: var(--r-xs); font-size: 14.5px; color: var(--ink-2); }
+  .grp a:hover { color: var(--ink); background: var(--surface-2); }
+  .grp a.on { color: var(--green-ink); background: var(--green-soft); font-weight: 600; }
+  .mnav { display: none; }
+  .prose { padding: 36px 0 64px; max-width: 760px; }
+  .prose h1 { font-size: 2.3rem; font-weight: 750; letter-spacing: -.035em; margin-bottom: 14px; }
+  .prose .lede { font-size: 1.12rem; color: var(--ink-2); margin-bottom: 28px; }
+  .prose h2 { font-size: 1.45rem; font-weight: 700; margin: 40px 0 12px; scroll-margin-top: 72px; }
+  .prose h3 { font-size: 1.1rem; font-weight: 650; margin: 28px 0 8px; }
+  .prose p { margin: 0 0 14px; line-height: 1.65; }
+  .prose ul { list-style: disc; }
+  .prose ol { list-style: decimal; }
+  .prose ul, .prose ol { margin: 0 0 16px; padding-left: 22px; color: var(--ink-2); line-height: 1.65; }
+  .prose li { margin: 4px 0; }
+  .prose a:not(.dcard):not(.btn) { color: var(--green-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--green-tint); }
+  .prose :not(pre) > code { font-size: .88em; background: var(--surface-2); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; color: var(--ink); }
+  .prose table { display: block; overflow-x: auto; width: 100%; border-collapse: collapse; margin: 16px 0 22px; font-size: 14.5px; }
+  .prose th, .prose td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .prose th { font: 500 11.5px/1 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
+  .prose .term, .prose .code { margin: 18px 0; max-width: 100%; }
+  .note { border: 1px solid var(--amber-line); background: var(--amber-soft); border-radius: var(--r-sm); padding: 12px 16px; margin: 18px 0; font-size: 14.5px; color: #6b4310; }
+  .cards3 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 20px 0 8px; }
+  .dcard { display: block; padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--shadow-sm); }
+  .dcard:hover { border-color: var(--green-tint); }
+  .dcard h3 { margin: 0 0 4px; font-size: 1.05rem; }
+  .dcard p { margin: 0; font-size: 14.5px; }
+  .foot { border-top: 1px solid var(--line); background: var(--surface-2); padding: 22px 0; font-size: 13.5px; color: var(--ink-3); }
+  .foot .in { height: auto; justify-content: space-between; }
+  .fl { display: flex; gap: 20px; }
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .side { display: none; }
+    .mnav { display: block; margin-top: 16px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); padding: 10px 14px; }
+    .mnav summary { font-weight: 600; cursor: pointer; }
+    .mnav .grp { margin-top: 14px; }
+    .search { display: none; }
+    .tl a:first-child { display: none; }
+    .cards3 { grid-template-columns: minmax(0, 1fr); }
+    .prose h1 { font-size: 1.9rem; }
+  }
+</style>

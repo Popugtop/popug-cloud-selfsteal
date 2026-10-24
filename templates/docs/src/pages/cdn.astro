@@ -1,0 +1,38 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+import Terminal from '@popug/design/Terminal.astro';
+---
+<DocsLayout title="CDN" description="Global content delivery with intelligent caching and low latency." current="/cdn/">
+  <h1>CDN</h1>
+  <p class="lede">Fast global content delivery with intelligent caching and low latency.</p>
+
+  <h2>Public URLs</h2>
+  <p>Every object in a public bucket is available at:</p>
+  <Terminal><span class="u">https://cdn.popug.cloud/&lt;bucket&gt;/&lt;key&gt;</span></Terminal>
+  <p>The CLI prints the URL for you:</p>
+  <Terminal>popug url s3://my-bucket/image.jpg</Terminal>
+
+  <h2>Caching</h2>
+  <p>Objects are cached at the edge and revalidated against Storage. Control caching with standard headers set when you upload an object.</p>
+  <table>
+    <thead><tr><th>Header</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td><code>Cache-Control: max-age</code></td><td>How long the edge may serve the object without revalidation</td></tr>
+      <tr><td><code>Cache-Control: immutable</code></td><td>Never revalidate; use with content-hashed file names</td></tr>
+      <tr><td><code>ETag</code></td><td>Used for conditional requests and revalidation</td></tr>
+    </tbody>
+  </table>
+  <p>Responses include an <code>X-Request-Id</code> header that you can share with support.</p>
+
+  <h2 id="purging">Purging</h2>
+  <p>Remove an object from all edge locations right after you replace it:</p>
+  <Terminal>popug cdn purge s3://my-bucket/image.jpg</Terminal>
+  <p>Purges propagate worldwide in a few seconds. The same operation is available as <code>POST /v1/purge</code> in the <a href="/api/">API</a>.</p>
+
+  <h2>Transport</h2>
+  <ul>
+    <li>HTTPS only, with automatic certificates.</li>
+    <li>HTTP/2 enabled by default.</li>
+    <li>Compression (gzip, zstd) for text-based content types.</li>
+  </ul>
+</DocsLayout>

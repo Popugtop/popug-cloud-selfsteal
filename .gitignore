@@ -1,0 +1,10 @@
+node_modules
+dist
+.astro
+*.tar.gz
+release
+.work
+docs/screens
+docs/gallery
+docs/curl
+design.tiff

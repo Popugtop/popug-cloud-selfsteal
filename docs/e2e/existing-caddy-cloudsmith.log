@@ -1,0 +1,49 @@
+== Caddy from apt (cloudsmith)
+debconf: delaying package configuration, since apt-utils is not installed
+debconf: delaying package configuration, since apt-utils is not installed
+  v2.11.7 h1:yj0Y4fYZGPkSvibBJ1sTWE33xC0fxztVyXEW5iIdUT4=
+== prepare: root server (public mode)
+  PASS  root + www alias
+  PASS  docs
+  PASS  status
+  PASS  console + auth alias
+  PASS  api
+  PASS  cdn
+  PASS  storage (s3)
+== prepare: node mode on the same Caddy
+  PASS  cdn node block
+  PASS  caddy validate (7 public sites + 1 node site)
+== certificates over HTTP-01 and content
+  PASS  valid certificate: popug.cloud
+  PASS  valid certificate: www.popug.cloud
+  PASS  valid certificate: docs.popug.cloud
+  PASS  valid certificate: status.popug.cloud
+  PASS  valid certificate: console.popug.cloud
+  PASS  valid certificate: auth.popug.cloud
+  PASS  valid certificate: api.popug.cloud
+  PASS  valid certificate: cdn.popug.cloud
+  PASS  valid certificate: s3.popug.cloud
+  PASS  valid certificate: storage.popug.cloud
+  PASS  existing site still works
+  PASS  root landing
+  PASS  www alias serves the same
+  PASS  docs overview
+  PASS  docs CLI page
+  PASS  status page
+  PASS  console sign-in
+  PASS  auth alias = console
+  PASS  api JSON
+  PASS  cdn root is 404
+  PASS  s3 AccessDenied
+  PASS  custom 404 on docs
+  PASS  no Server header on our sites
+== node mode
+  PASS  node site: valid certificate on 127.0.0.1:8443
+  PASS  node site bound to loopback only
+  PASS  node site serves the cdn template
+== idempotent re-run and reload
+  PASS  re-running prepare keeps all files identical
+  PASS  caddy reload works and site keeps answering
+  PASS  unknown template is rejected
+
+RESULT (cloudsmith, v2.11.7): 38 passed, 0 failed

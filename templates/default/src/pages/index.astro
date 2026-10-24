@@ -1,0 +1,31 @@
+---
+import Layout from '@popug/design/Layout.astro';
+import Logo from '@popug/design/Logo.astro';
+import Icon from '@popug/design/Icon.astro';
+import { links } from '@popug/design/site.ts';
+---
+<Layout title="Popug Cloud" description="This endpoint is part of the Popug Cloud network." chrome={false}>
+  <main class="dflt">
+    <div class="card box">
+      <Logo />
+      <p class="eyebrow">Popug Cloud network</p>
+      <h1 class="h2">You have reached a Popug Cloud endpoint</h1>
+      <p>This address is part of our global infrastructure and does not serve public content. If you are looking for our products, documentation or service health, use the links below.</p>
+      <ul class="links">
+        <li><a href={links.home}>Home <Icon name="arrow" size={14} stroke={2} /></a></li>
+        <li><a href={links.docs}>Documentation <Icon name="arrow" size={14} stroke={2} /></a></li>
+        <li><a href={links.status}>System status <Icon name="arrow" size={14} stroke={2} /></a></li>
+      </ul>
+    </div>
+  </main>
+</Layout>
+<style is:global>
+  .dflt { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: linear-gradient(180deg, var(--glow), var(--bg) 360px); }
+  .box { width: 100%; max-width: 520px; padding: 32px; }
+  .box .eyebrow { margin: 28px 0 10px; }
+  .box h1 { margin-bottom: 12px; }
+  .box p { font-size: 15px; line-height: 1.6; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 20px; }
+  .links a { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14.5px; color: var(--green-ink); }
+  .links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+</style>

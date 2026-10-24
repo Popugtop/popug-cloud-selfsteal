@@ -1,0 +1,61 @@
+/* Popug Cloud design tokens — shared by the landing page and all templates. */
+:root {
+  /* surfaces */
+  --bg: #fcfbf8;
+  --surface: #fdfcfa;
+  --surface-2: #f6f5f0;
+  --line: #eceae3;
+  --line-strong: #d9d9d2;
+
+  /* text */
+  --ink: #0f1613;
+  --ink-2: #424850;
+  --ink-3: #7a8079;
+
+  /* primary: deep green */
+  --green: #2a5745;
+  --green-hover: #234a3a;
+  --green-ink: #214c3b;
+  --green-soft: #eef1eb;
+  --green-tint: #d4e1d3;
+
+  /* secondary: amber */
+  --amber: #e58f33;
+  --amber-deep: #e07a13;
+  --amber-soft: #fef1e1;
+  --amber-badge: #fbc786;
+  --amber-line: #f3bb88;
+  --sun: #f8b462;
+  --glow: #fdf1e3;
+
+  /* status */
+  --ok: #2f9e5c;
+  --warn: #d99a1b;
+  --err: #d4553d;
+
+  /* terminal / code window */
+  --term-bg: #1d2426;
+  --term-bar: #222a2c;
+  --term-ink: #e9efec;
+  --term-dim: #8fa39e;
+  --term-green: #76d3a7;
+  --dot-red: #f65e5e;
+  --dot-yellow: #fbbc3a;
+  --dot-green: #34c840;
+
+  /* type */
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* shape */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --shadow-sm: 0 1px 2px rgba(20, 30, 25, .04);
+  --shadow: 0 1px 2px rgba(20, 30, 25, .04), 0 10px 28px rgba(20, 30, 25, .04);
+  --shadow-term: 0 18px 40px rgba(20, 30, 25, .22);
+
+  --wrap: 1116px;
+  --gutter: 24px;
+}

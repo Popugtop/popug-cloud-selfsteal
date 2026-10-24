@@ -1,0 +1,50 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+import Code from '@popug/design/Code.astro';
+---
+<DocsLayout title="API" description="Reference for the Popug Cloud REST API." current="/api/">
+  <h1>API</h1>
+  <p class="lede">A clean and documented REST API to automate your infrastructure.</p>
+
+  <h2>Base URL</h2>
+  <p>All endpoints live under <code>https://api.popug.cloud/v1</code>. Requests and responses use JSON. See <a href="/authentication/">Authentication</a> for how to send your token.</p>
+
+  <h2>Service status</h2>
+  <p>A request to the root returns the service name, status and version:</p>
+  <Code label="GET https://api.popug.cloud/">{`{"service":"popug-api","status":"ok","version":"2.9.1"}`}</Code>
+
+  <h2>Endpoints</h2>
+  <table>
+    <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>GET</td><td><code>/v1/buckets</code></td><td>List buckets</td></tr>
+      <tr><td>POST</td><td><code>/v1/buckets</code></td><td>Create a bucket</td></tr>
+      <tr><td>DELETE</td><td><code>/v1/buckets/{'{name}'}</code></td><td>Delete an empty bucket</td></tr>
+      <tr><td>GET</td><td><code>/v1/buckets/{'{name}'}/objects</code></td><td>List objects in a bucket</td></tr>
+      <tr><td>POST</td><td><code>/v1/purge</code></td><td>Purge objects from the CDN</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Example</h2>
+  <Code label="curl">{`curl https://api.popug.cloud/v1/buckets \\
+  -H "Authorization: Bearer $POPUG_TOKEN"`}</Code>
+  <Code label="200 OK">{`{
+  "data": [
+    { "name": "my-bucket", "region": "eu", "public": true, "created_at": "2026-03-14T09:21:07Z" }
+  ]
+}`}</Code>
+
+  <h2>Errors</h2>
+  <table>
+    <thead><tr><th>Status</th><th>Code</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>401</td><td><code>unauthorized</code></td><td>Missing or invalid API token</td></tr>
+      <tr><td>403</td><td><code>forbidden</code></td><td>The token does not have the required scope</td></tr>
+      <tr><td>404</td><td><code>not_found</code></td><td>The requested resource does not exist</td></tr>
+      <tr><td>429</td><td><code>rate_limited</code></td><td>Too many requests; retry after the time in <code>Retry-After</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Rate limits</h2>
+  <p>The default limit is 600 requests per minute per token. Every response carries <code>X-RateLimit-Limit</code> and <code>X-RateLimit-Remaining</code> headers.</p>
+</DocsLayout>

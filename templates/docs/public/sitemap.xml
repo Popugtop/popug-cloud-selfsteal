@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://docs.popug.cloud/</loc><lastmod>@@LASTMOD@@</lastmod></url>
+  <url><loc>https://docs.popug.cloud/quickstart/</loc><lastmod>@@LASTMOD@@</lastmod></url>
+  <url><loc>https://docs.popug.cloud/authentication/</loc><lastmod>@@LASTMOD@@</lastmod></url>
+  <url><loc>https://docs.popug.cloud/storage/</loc><lastmod>@@LASTMOD@@</lastmod></url>
+  <url><loc>https://docs.popug.cloud/cdn/</loc><lastmod>@@LASTMOD@@</lastmod></url>
+  <url><loc>https://docs.popug.cloud/api/</loc><lastmod>@@LASTMOD@@</lastmod></url>
+  <url><loc>https://docs.popug.cloud/cli/</loc><lastmod>@@LASTMOD@@</lastmod></url>
+</urlset>

@@ -1,0 +1,17 @@
+---
+import Layout from '@popug/design/Layout.astro';
+---
+<Layout title="404 Not Found" description="The requested object was not found." chrome={false}>
+  <link rel="stylesheet" href="/assets/css/ui.css" />
+  <main class="nf">
+    <img src="/assets/img/logo-mark.svg" width="40" height="32" alt="" />
+    <h1>404</h1>
+    <p>The requested object was not found.</p>
+    <code>edge @@BUILD_ID@@</code>
+  </main>
+</Layout>
+<style is:global>
+  .nf { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 24px; }
+  .nf h1 { font-size: 3.2rem; letter-spacing: -.04em; margin-top: 8px; }
+  .nf code { margin-top: 14px; font-size: 12px; color: var(--ink-3); }
+</style>

@@ -1,0 +1,15 @@
+---
+interface Props { size?: number; wordmark?: boolean }
+const { size = 30, wordmark = true } = Astro.props;
+---
+<span class="logo">
+  <svg width={size} height={size * 0.8} viewBox="0 0 40 32" fill="none" aria-hidden="true">
+    <path d="M11 27.5a8 8 0 0 1-1.6-15.8A10.5 10.5 0 0 1 29.6 9.6 8.6 8.6 0 0 1 30 27.5z" stroke="var(--amber)" stroke-width="2.6" stroke-linejoin="round" />
+    <path d="M16 15a6.5 6.5 0 0 1 5.5-3.2" stroke="var(--amber)" stroke-width="2.2" stroke-linecap="round" />
+  </svg>
+  {wordmark && <span class="wm">Popug Cloud</span>}
+</span>
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 10px; }
+  .wm { font-weight: 700; font-size: 20px; letter-spacing: -.025em; color: var(--ink); }
+</style>

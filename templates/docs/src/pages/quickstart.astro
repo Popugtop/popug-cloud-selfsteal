@@ -1,0 +1,37 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+import Terminal from '@popug/design/Terminal.astro';
+---
+<DocsLayout title="Quickstart" description="Upload a file and get a public URL with the Popug Cloud CLI." current="/quickstart/">
+  <h1>Quickstart</h1>
+  <p class="lede">Upload a file to Storage and serve it through the CDN in a few commands.</p>
+  <div class="note">Console access is currently invite-only while we are in private beta. If you already have an invitation, sign in at the Console and create an API token first.</div>
+
+  <h2>1. Install the CLI</h2>
+  <p>The <code>popug</code> command line tool is available for macOS and Linux. See <a href="/cli/">CLI</a> for all install options.</p>
+  <Terminal>brew install popug-cloud/tap/popug</Terminal>
+
+  <h2>2. Sign in</h2>
+  <p>Run <code>popug login</code> and paste your API token when prompted. The token is stored in <code>~/.config/popug/config.toml</code>.</p>
+  <Terminal>popug login</Terminal>
+
+  <h2>3. Create a bucket</h2>
+  <Terminal>popug storage mb s3://my-bucket</Terminal>
+
+  <h2>4. Upload a file</h2>
+  <Terminal><span class="c"># Upload a file with the Popug Cloud CLI</span>
+popug storage upload ./image.jpg s3://my-bucket/image.jpg</Terminal>
+
+  <h2>5. Get a public URL</h2>
+  <p>Objects in a public bucket are delivered through the CDN. Ask the CLI for the URL:</p>
+  <Terminal><span class="c"># Get a public URL (delivered via our CDN)</span>
+popug url s3://my-bucket/image.jpg
+<span class="u">https://cdn.popug.cloud/my-bucket/image.jpg</span></Terminal>
+
+  <h2>Next steps</h2>
+  <ul>
+    <li>Read about <a href="/storage/">buckets and access control</a>.</li>
+    <li>Learn how <a href="/cdn/">caching</a> works at the edge.</li>
+    <li>Automate everything with the <a href="/api/">REST API</a>.</li>
+  </ul>
+</DocsLayout>

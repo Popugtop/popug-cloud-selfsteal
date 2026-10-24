@@ -1,0 +1,17 @@
+---
+import Layout from '@popug/design/Layout.astro';
+import Logo from '@popug/design/Logo.astro';
+---
+<Layout title="404 page not found" description="Not found." chrome={false}>
+  <main class="nf">
+    <Logo size={26} />
+    <p class="eyebrow">404</p>
+    <h1 class="h2">Page not found</h1>
+    <p>The requested resource does not exist on this registry.</p>
+  </main>
+</Layout>
+<style is:global>
+  .nf { max-width: 520px; margin: 18vh auto 0; padding: 0 24px; }
+  .nf .eyebrow { margin-top: 28px; }
+  .nf p { margin-top: 10px; }
+</style>

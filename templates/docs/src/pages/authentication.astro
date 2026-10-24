@@ -1,0 +1,37 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+import Code from '@popug/design/Code.astro';
+import Terminal from '@popug/design/Terminal.astro';
+---
+<DocsLayout title="Authentication" description="API tokens, scopes and how to authenticate requests." current="/authentication/">
+  <h1>Authentication</h1>
+  <p class="lede">All requests to the API and to Storage are authenticated with API tokens.</p>
+
+  <h2>API tokens</h2>
+  <p>Create tokens in the Console or with the CLI. Send the token in the <code>Authorization</code> header using the Bearer scheme:</p>
+  <Code label="HTTP"><span class="k">Authorization:</span> Bearer pc_live_xxxxxxxxxxxxxxxx</Code>
+  <p>Tokens are shown once when created. Store them in a secrets manager and rotate them regularly.</p>
+
+  <h2>Scopes</h2>
+  <table>
+    <thead><tr><th>Scope</th><th>Allows</th></tr></thead>
+    <tbody>
+      <tr><td><code>storage:read</code></td><td>List buckets, read and list objects</td></tr>
+      <tr><td><code>storage:write</code></td><td>Create buckets, upload and delete objects</td></tr>
+      <tr><td><code>cdn:purge</code></td><td>Purge cached objects</td></tr>
+      <tr><td><code>admin</code></td><td>Manage tokens and account settings</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Create a token with the CLI</h2>
+  <Terminal>popug token create --name ci --scope storage:write --scope cdn:purge</Terminal>
+
+  <h2>Authentication errors</h2>
+  <p>Requests without a valid token receive <code>401 Unauthorized</code>:</p>
+  <Code label="JSON">{`{
+  "error": {
+    "code": "unauthorized",
+    "message": "Missing or invalid API token."
+  }
+}`}</Code>
+</DocsLayout>

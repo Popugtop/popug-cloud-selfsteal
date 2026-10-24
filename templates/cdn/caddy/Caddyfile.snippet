@@ -1,0 +1,46 @@
+# edge asset host
+root * /var/www/html
+encode zstd gzip
+
+header {
+	-Server
+	Strict-Transport-Security "max-age=31536000"
+	X-Content-Type-Options "nosniff"
+	Referrer-Policy "strict-origin-when-cross-origin"
+	Timing-Allow-Origin "*"
+	X-Request-Id "{http.request.uuid}"
+}
+
+handle /assets/* {
+	header Cache-Control "public, max-age=31536000, immutable"
+	header Access-Control-Allow-Origin "*"
+	file_server
+}
+
+handle /favicon.svg {
+	header Cache-Control "public, max-age=86400"
+	file_server
+}
+
+handle /robots.txt {
+	header Cache-Control "public, max-age=86400"
+	file_server
+}
+
+handle {
+	error 404
+}
+
+handle_errors {
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Timing-Allow-Origin "*"
+		X-Request-Id "{http.request.uuid}"
+	}
+	header Cache-Control "public, max-age=60"
+	rewrite * /404.html
+	file_server
+}

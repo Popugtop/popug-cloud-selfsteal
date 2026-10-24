@@ -1,0 +1,89 @@
+---
+import Layout from '@popug/design/Layout.astro';
+import Logo from '@popug/design/Logo.astro';
+import Icon from '@popug/design/Icon.astro';
+import Shuffle from '@popug/design/Shuffle.astro';
+import { links } from '@popug/design/site.ts';
+const comps = [
+  ['Object Storage', 'storage', 'S3-compatible API and uploads'],
+  ['CDN', 'cdn', 'Edge delivery and cache purging'],
+  ['API', 'api', 'REST API and webhooks'],
+  ['Console', 'console', 'Web dashboard and sign-in'],
+  ['DNS', 'dns', 'Authoritative name servers'],
+];
+const rows = comps.map(([name, id, note]) =>
+  `<li class="comp"><div class="row"><div><strong>${name}</strong><span class="note">${note}</span></div><div class="up"><span class="ok"><i></i>Operational</span><span class="pct">@@UPTIME:${id}@@</span></div></div>@@BAR:${id}@@<div class="legend"><span>90 days ago</span><span>Today</span></div></li>`);
+const year = new Date().getFullYear();
+---
+<Layout title="Popug Cloud Status" description="Current status and incident history for Popug Cloud services." chrome={false}>
+  <header class="top"><div class="w">
+    <a href={links.home} aria-label="Popug Cloud"><Logo size={26} /></a>
+    <span class="tag">Status</span>
+    <a class="back" href={links.home}>popug.cloud</a>
+  </div></header>
+  <main class="w main">
+    <div class="banner"><Icon name="check" size={22} stroke={2.4} /><div><h1>All systems operational</h1><p>All services are running normally.</p></div></div>
+
+    <h2>Services</h2>
+    <ul class="comps"><Shuffle items={rows} /></ul>
+
+    <h2>Past incidents</h2>
+    <div class="incidents">
+      <article class="inc">
+        <h3>@@PICK:Increased latency in European edge locations|Elevated cache miss rate in some regions|Delayed cache purges@@</h3>
+        <p class="date">@@AGO:1@@ · <span class="res">Resolved</span></p>
+        <p><strong>Resolved</strong> — The issue has been resolved and the CDN is operating normally. @@PICK:Cache hit ratios have returned to their usual levels.|All edge locations are serving traffic as expected.@@</p>
+        <p><strong>Investigating</strong> — We are looking into reports of degraded CDN performance.</p>
+      </article>
+      <article class="inc">
+        <h3>@@PICK:Elevated API error rates|Increased API latency|Intermittent errors on the API@@</h3>
+        <p class="date">@@AGO:2@@ · <span class="res">Resolved</span></p>
+        <p><strong>Resolved</strong> — A fix has been deployed and error rates are back to normal. @@PICK:We will publish a summary of the cause shortly.|No customer data was affected.@@</p>
+        <p><strong>Identified</strong> — The cause has been identified and a fix is being rolled out.</p>
+      </article>
+      <article class="inc">
+        <h3>@@PICK:Degraded upload performance|Delays in object listing|Elevated storage request latency@@</h3>
+        <p class="date">@@AGO:3@@ · <span class="res">Resolved</span></p>
+        <p><strong>Resolved</strong> — Storage performance has recovered. @@PICK:Objects uploaded during the incident were stored correctly.|No objects were lost.@@</p>
+        <p><strong>Monitoring</strong> — A mitigation has been applied and we are monitoring the results.</p>
+      </article>
+    </div>
+  </main>
+  <footer class="foot"><div class="w">© {year} Popug Cloud, Inc. · <a href={links.docs}>Documentation</a></div></footer>
+</Layout>
+
+<style is:global>
+  .w { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+  .top { border-bottom: 1px solid var(--line); background: var(--bg); }
+  .top .w { display: flex; align-items: center; gap: 14px; height: 56px; }
+  .tag { font: 500 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px; border-radius: 99px; background: var(--green-soft); color: var(--green-ink); }
+  .back { margin-left: auto; font-size: 14.5px; font-weight: 500; }
+  .main { padding-top: 36px; padding-bottom: 56px; }
+  .banner { display: flex; gap: 16px; align-items: center; padding: 22px 24px; border-radius: var(--r-md); background: #e8f4ec; border: 1px solid #c9e4d3; color: #17613a; }
+  .banner h1 { font-size: 1.45rem; letter-spacing: -.02em; color: #17613a; }
+  .banner p { color: #2c7a4f; font-size: 14.5px; }
+  .banner svg { flex: none; background: #2f9e5c; color: #fff; border-radius: 50%; padding: 5px; width: 34px; height: 34px; }
+  .main h2 { font-size: 1.15rem; margin: 40px 0 14px; letter-spacing: -.02em; }
+  .comps { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-sm); }
+  .comp { padding: 18px 22px; border-bottom: 1px solid var(--line); }
+  .comp:last-child { border-bottom: 0; }
+  .row { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+  .row strong { display: block; font-size: 1rem; }
+  .note { display: block; font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+  .up { display: flex; align-items: center; gap: 16px; font-size: 13.5px; white-space: nowrap; }
+  .ok { display: inline-flex; align-items: center; gap: 7px; color: #17613a; font-weight: 600; }
+  .ok i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+  .pct { color: var(--ink-2); font-variant-numeric: tabular-nums; min-width: 58px; text-align: right; }
+  .bar { display: flex; gap: 2px; margin-top: 14px; height: 30px; }
+  .bar .d { flex: 1; border-radius: 2px; background: var(--ok); opacity: .9; }
+  .bar .d.p { background: var(--warn); }
+  .bar .d.m { background: var(--err); }
+  .legend { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: var(--ink-3); }
+  .inc { padding: 20px 22px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); margin-bottom: 14px; }
+  .inc h3 { font-size: 1.05rem; letter-spacing: -.01em; }
+  .inc p { font-size: 14.5px; margin-top: 8px; line-height: 1.6; }
+  .inc .date { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
+  .res { color: #17613a; font-weight: 600; }
+  .foot { border-top: 1px solid var(--line); background: var(--surface-2); padding: 22px 0; font-size: 13.5px; color: var(--ink-3); }
+  @media (max-width: 560px) { .row { flex-direction: column; gap: 10px; } .banner h1 { font-size: 1.2rem; } .bar { height: 26px; gap: 1px; } }
+</style>

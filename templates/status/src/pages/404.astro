@@ -1,0 +1,19 @@
+---
+import Layout from '@popug/design/Layout.astro';
+import Logo from '@popug/design/Logo.astro';
+import { links } from '@popug/design/site.ts';
+---
+<Layout title="Page not found — Popug Cloud Status" description="This page does not exist." chrome={false}>
+  <main class="nf">
+    <a href={links.home}><Logo size={26} /></a>
+    <p class="eyebrow">404</p>
+    <h1 class="h2">Page not found</h1>
+    <p>There is nothing at this address. <a class="lnk" href="/">View current status</a></p>
+  </main>
+</Layout>
+<style is:global>
+  .nf { max-width: 520px; margin: 18vh auto 0; padding: 0 24px; }
+  .nf .eyebrow { margin-top: 28px; }
+  .nf p { margin-top: 10px; }
+  .lnk { color: var(--green-ink); text-decoration: underline; text-underline-offset: 3px; }
+</style>

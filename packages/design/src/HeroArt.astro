@@ -1,0 +1,17 @@
+---
+/* Soft landscape: glow, sun, hills and a thin line. Purely decorative. */
+---
+<svg class="art" viewBox="0 0 640 330" preserveAspectRatio="xMaxYMax slice" fill="none" aria-hidden="true">
+  <circle cx="470" cy="70" r="230" fill="var(--glow)" />
+  <circle cx="519" cy="170" r="26" fill="var(--sun)" />
+  <path d="M170 330 C 230 270 300 250 380 262 C 450 228 530 214 640 238 V330 Z" fill="#edede4" />
+  <path d="M300 330 L 395 214 C 405 202 418 202 428 213 L 480 268 L 522 236 C 532 228 543 229 551 237 L 640 300 V330 Z" fill="var(--green-tint)" />
+  <path d="M250 330 L 330 262 C 340 254 352 255 361 263 L 420 316 L 455 330 Z" fill="#c4d6c5" opacity=".75" />
+  <path d="M110 330 C 170 304 270 290 350 306 C 440 322 530 296 640 306 V330 Z" fill="#f3f4ee" />
+  <path d="M60 330 C 200 300 330 242 440 198 C 520 168 580 160 640 166" stroke="var(--amber)" stroke-width="1.2" opacity=".85" />
+  <path d="M120 330 C 250 310 380 262 470 232 C 540 210 590 206 640 210" stroke="#b9bcb4" stroke-width="1" opacity=".7" />
+</svg>
+<style>
+  .art { position: absolute; right: 0; bottom: 0; width: min(640px, 48vw); height: 100%; pointer-events: none; }
+  @media (max-width: 900px) { .art { width: 100%; opacity: .55; } }
+</style>

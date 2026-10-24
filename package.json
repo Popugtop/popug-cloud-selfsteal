@@ -1,0 +1,20 @@
+{
+  "name": "popug-cloud-sites",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "sites/*",
+    "templates/*"
+  ],
+  "scripts": {
+    "dev:root": "npm run dev -w @popug/root",
+    "build:root": "npm run build -w @popug/root",
+    "build:templates": "node tools/build-release.mjs"
+  },
+  "devDependencies": {
+    "astro": "^7.4.2",
+    "typescript": "^7.0.2"
+  },
+  "version": "0.1.0"
+}

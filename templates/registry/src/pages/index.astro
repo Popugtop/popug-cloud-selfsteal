@@ -1,0 +1,28 @@
+---
+import Layout from '@popug/design/Layout.astro';
+import Logo from '@popug/design/Logo.astro';
+import Terminal from '@popug/design/Terminal.astro';
+import { links } from '@popug/design/site.ts';
+---
+<Layout title="Popug Container Registry" description="Private container image registry." chrome={false}>
+  <main class="reg">
+    <a href={links.home}><Logo size={26} /></a>
+    <p class="eyebrow">Container registry</p>
+    <h1 class="h2">Store and pull container images</h1>
+    <p class="lead">This endpoint is the Popug Cloud container registry. It speaks the standard registry HTTP API and requires authentication.</p>
+    <h2 class="h3">Sign in</h2>
+    <Terminal>docker login @@DOMAIN@@</Terminal>
+    <h2 class="h3">Push an image</h2>
+    <Terminal>docker tag my-app:latest @@DOMAIN@@/my-team/my-app:latest
+docker push @@DOMAIN@@/my-team/my-app:latest</Terminal>
+    <p class="fine">Credentials are API tokens created in the <a href={links.console}>Console</a>. Read the <a href={links.docs}>documentation</a> for details.</p>
+  </main>
+</Layout>
+<style is:global>
+  .reg { max-width: 640px; margin: 0 auto; padding: 56px 24px 64px; }
+  .reg .eyebrow { margin-top: 36px; }
+  .reg .lead { margin: 12px 0 28px; font-size: 1.05rem; }
+  .reg .h3 { font-size: 1.1rem; font-weight: 700; margin: 26px 0 10px; }
+  .fine { margin-top: 28px; font-size: 14px; }
+  .fine a { color: var(--green-ink); text-decoration: underline; text-underline-offset: 3px; }
+</style>

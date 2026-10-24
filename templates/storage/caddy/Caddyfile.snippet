@@ -1,0 +1,38 @@
+# S3-style object storage endpoint
+root * /var/www/html
+
+header {
+	-Server
+	Strict-Transport-Security "max-age=31536000"
+	X-Content-Type-Options "nosniff"
+	X-Request-Id "{http.request.uuid}"
+}
+
+@files path /robots.txt /favicon.svg
+handle @files {
+	header Cache-Control "public, max-age=86400"
+	file_server
+}
+
+@write method PUT POST DELETE PATCH
+handle @write {
+	header Content-Type "application/xml"
+	respond `<?xml version="1.0" encoding="UTF-8"?><Error><Code>AccessDenied</Code><Message>Access Denied</Message><RequestId>{http.request.uuid}</RequestId><HostId>@@HOSTID@@</HostId></Error>` 403
+}
+
+@root path /
+handle @root {
+	header Content-Type "application/xml"
+	respond `<?xml version="1.0" encoding="UTF-8"?><Error><Code>AccessDenied</Code><Message>Access Denied</Message><RequestId>{http.request.uuid}</RequestId><HostId>@@HOSTID@@</HostId></Error>` 403
+}
+
+@bucket path_regexp bucket ^/([a-z0-9][a-z0-9.-]{1,61}[a-z0-9])(/.*)?$
+handle @bucket {
+	header Content-Type "application/xml"
+	respond `<?xml version="1.0" encoding="UTF-8"?><Error><Code>NoSuchBucket</Code><Message>The specified bucket does not exist</Message><BucketName>{http.regexp.bucket.1}</BucketName><RequestId>{http.request.uuid}</RequestId><HostId>@@HOSTID@@</HostId></Error>` 404
+}
+
+handle {
+	header Content-Type "application/xml"
+	respond `<?xml version="1.0" encoding="UTF-8"?><Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message><RequestId>{http.request.uuid}</RequestId><HostId>@@HOSTID@@</HostId></Error>` 400
+}

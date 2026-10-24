@@ -1,0 +1,8 @@
+---
+/* Renders items in order, separated by markers that tools/randomize.sh
+   uses to reorder them per installation. Items are trusted HTML strings. */
+interface Props { items: string[] }
+const { items } = Astro.props;
+const html = '<!--@@S@@-->' + items.join('<!--@@I@@-->') + '<!--@@E@@-->';
+---
+<Fragment set:html={html} />

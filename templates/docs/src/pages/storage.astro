@@ -1,0 +1,48 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+import Terminal from '@popug/design/Terminal.astro';
+---
+<DocsLayout title="Storage" description="S3-compatible object storage: buckets, objects and access control." current="/storage/">
+  <h1>Storage</h1>
+  <p class="lede">S3-compatible object storage with high durability and simple access controls.</p>
+
+  <h2>Concepts</h2>
+  <ul>
+    <li><strong>Bucket</strong> — a named container for objects. Bucket names are unique across Popug Cloud.</li>
+    <li><strong>Object</strong> — a file and its metadata, addressed by a key such as <code>images/logo.png</code>.</li>
+    <li><strong>Visibility</strong> — buckets are private by default. Public buckets are served through the CDN.</li>
+  </ul>
+
+  <h2>Working with the CLI</h2>
+  <Terminal><span class="c"># create a bucket, upload, list and delete</span>
+popug storage mb s3://my-bucket
+popug storage upload ./image.jpg s3://my-bucket/image.jpg
+popug storage ls s3://my-bucket
+popug storage rm s3://my-bucket/image.jpg</Terminal>
+
+  <h2>S3-compatible access</h2>
+  <p>Any S3-compatible SDK or tool can talk to Storage. Use the following settings:</p>
+  <table>
+    <tbody>
+      <tr><th>Endpoint</th><td><code>https://s3.popug.cloud</code></td></tr>
+      <tr><th>Addressing</th><td>Path-style (<code>https://s3.popug.cloud/my-bucket/key</code>)</td></tr>
+      <tr><th>Credentials</th><td>Access key and secret from the Console</td></tr>
+      <tr><th>Regional endpoints</th><td><code>https://&lt;region&gt;.s3.popug.cloud</code></td></tr>
+    </tbody>
+  </table>
+  <p>Requests that are not signed receive an S3-style <code>AccessDenied</code> or <code>NoSuchBucket</code> XML error.</p>
+
+  <h2>Presigned URLs</h2>
+  <p>Share a private object for a limited time:</p>
+  <Terminal>popug storage presign s3://my-bucket/image.jpg --expires 1h</Terminal>
+
+  <h2>Limits</h2>
+  <table>
+    <thead><tr><th>Item</th><th>Limit</th></tr></thead>
+    <tbody>
+      <tr><td>Maximum object size</td><td>5 TB (multipart upload above 5 GB)</td></tr>
+      <tr><td>Buckets per account</td><td>100</td></tr>
+      <tr><td>Key length</td><td>1024 bytes</td></tr>
+    </tbody>
+  </table>
+</DocsLayout>

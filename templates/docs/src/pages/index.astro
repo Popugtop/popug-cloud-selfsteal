@@ -1,0 +1,24 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+import Shuffle from '@popug/design/Shuffle.astro';
+const guides = [
+  ['Upload your first file', '/quickstart/'],
+  ['Serve a bucket through the CDN', '/cdn/'],
+  ['Create and scope an API token', '/authentication/'],
+  ['Purge cached files', '/cdn/#purging'],
+  ['List and manage buckets with the API', '/api/'],
+  ['Install and configure the CLI', '/cli/'],
+].map(([t, h]) => `<li><a href="${h}">${t}</a></li>`);
+---
+<DocsLayout title="Documentation" description="Guides and reference for Popug Cloud Storage, CDN and API." current="/">
+  <h1>Popug Cloud documentation</h1>
+  <p class="lede">Everything you need to store files, deliver them globally and automate it with the API and CLI.</p>
+  <div class="cards3">
+    <a class="dcard" href="/quickstart/"><h3>Quickstart</h3><p>Upload a file and get a public URL in about five minutes.</p></a>
+    <a class="dcard" href="/storage/"><h3>Storage</h3><p>Buckets, objects and S3-compatible access.</p></a>
+    <a class="dcard" href="/cdn/"><h3>CDN</h3><p>Caching, delivery and purging from the edge.</p></a>
+    <a class="dcard" href="/api/"><h3>API</h3><p>Reference for the REST API and webhooks.</p></a>
+  </div>
+  <h2>Popular guides</h2>
+  <ul><Shuffle items={guides} /></ul>
+</DocsLayout>

@@ -1,0 +1,35 @@
+---
+import Layout from '@popug/design/Layout.astro';
+import Logo from '@popug/design/Logo.astro';
+import { links } from '@popug/design/site.ts';
+---
+<Layout title="Sign in — Popug Cloud Console" description="Sign in to the Popug Cloud Console." chrome={false}>
+  <main class="auth">
+    <a class="logo" href={links.home}><Logo /></a>
+    <div class="card box">
+      <h1>Sign in to Console</h1>
+      <p class="sub">Manage buckets, tokens and distributions.</p>
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" placeholder="you@company.com" />
+      <label for="pw">Password</label>
+      <input id="pw" type="password" autocomplete="current-password" placeholder="••••••••" />
+      <a class="btn btn-primary full" href="/beta/">Sign in</a>
+      <p class="alt">New to Popug Cloud? <a href="/beta/">Request access</a></p>
+    </div>
+    <p class="fine"><a href={links.docs}>Docs</a> · <a href={links.status}>Status</a></p>
+  </main>
+</Layout>
+<style is:global>
+  .auth { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 56px 20px 32px; background: linear-gradient(180deg, var(--glow), var(--bg) 320px); }
+  .auth .logo { margin-bottom: 28px; }
+  .box { width: 100%; max-width: 400px; padding: 28px; }
+  .box h1 { font-size: 1.5rem; letter-spacing: -.025em; }
+  .box .sub { margin: 6px 0 22px; font-size: 14.5px; }
+  .box label { display: block; font-size: 13px; font-weight: 600; margin: 14px 0 6px; }
+  .box input { width: 100%; height: 42px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: var(--r-xs); font: 15px var(--font-sans); background: var(--surface); color: var(--ink); }
+  .box input:focus { outline: 2px solid var(--green-tint); border-color: var(--green); }
+  .full { width: 100%; margin-top: 22px; }
+  .alt { margin-top: 18px; font-size: 14px; text-align: center; }
+  .alt a, .fine a { color: var(--green-ink); text-decoration: underline; text-underline-offset: 3px; }
+  .fine { margin-top: 24px; font-size: 13.5px; color: var(--ink-3); }
+</style>

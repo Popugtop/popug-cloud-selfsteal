@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+---
+<div class="term" role="img" aria-label="Command line example">
+  <div class="bar">
+    <span class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></span>
+    <span class="copy"><Icon name="copy" size={16} /></span>
+  </div>
+  <pre class="body"><slot /></pre>
+</div>
+<style>
+  .term { background: var(--term-bg); border-radius: var(--r-md); box-shadow: var(--shadow-term); overflow: hidden; color: var(--term-ink); }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 40px; padding: 0 16px; background: var(--term-bar); }
+  .dots { display: flex; gap: 8px; }
+  .dots i { width: 11px; height: 11px; border-radius: 50%; }
+  .r { background: var(--dot-red); } .y { background: var(--dot-yellow); } .g { background: var(--dot-green); }
+  .copy { color: #9aa6a3; display: grid; }
+  .body { margin: 0; padding: 20px 20px 22px; font-size: 12.5px; line-height: 1.7; overflow-x: auto; white-space: pre; }
+  .body :global(.c) { color: var(--term-dim); }
+  .body :global(.u) { color: var(--term-green); }
+</style>

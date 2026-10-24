@@ -1,0 +1,18 @@
+---
+type Name = 'database' | 'globe' | 'code' | 'check' | 'arrow' | 'copy' | 'server' | 'key' | 'box' | 'lock';
+interface Props { name: Name; size?: number; stroke?: number }
+const { name, size = 24, stroke = 1.6 } = Astro.props;
+const paths: Record<Name, string> = {
+  database: '<ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v13c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-13"/><path d="M4.5 12c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.5 3.9 5.5 3.9 9s-1.3 6.5-3.9 9c-2.6-2.5-3.9-5.5-3.9-9S9.400 5.500 12 3z"/>',
+  code: '<path d="m8.500 7-5 5 5 5"/><path d="m15.500 7 5 5-5 5"/><path d="m13.500 5-3 14"/>',
+  check: '<path d="m4.500 12.500 4.500 4.500 10.500-10.500"/>',
+  arrow: '<path d="M4 12h15"/><path d="m13 6 6 6-6 6"/>',
+  copy: '<rect x="8.500" y="8.500" width="11" height="11" rx="2"/><path d="M15.500 8.500v-2a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/>',
+  server: '<rect x="3.500" y="4" width="17" height="7" rx="2"/><rect x="3.500" y="13" width="17" height="7" rx="2"/><path d="M7.500 7.500h.01M7.500 16.500h.01"/>',
+  key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 8-8"/><path d="m16 7 2.500 2.500"/>',
+  box: '<path d="m12 3 8.500 4.500v9L12 21l-8.500-4.500v-9z"/><path d="m3.500 7.500 8.500 4.500 8.500-4.500"/><path d="M12 12v9"/>',
+  lock: '<rect x="5" y="10.500" width="14" height="9.500" rx="2"/><path d="M8 10.500V8a4 4 0 0 1 8 0v2.500"/>',
+};
+---
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width={stroke} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={paths[name]} />

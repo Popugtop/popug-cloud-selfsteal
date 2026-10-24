@@ -1,0 +1,9 @@
+/* Popug Cloud shared UI styles */
+:root{--pc-ink:#0f1613;--pc-green:#2a5745;--pc-amber:#e58f33;--pc-bg:#fcfbf8;--pc-line:#eceae3}
+.pc-body{margin:0;background:var(--pc-bg);color:var(--pc-ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.pc-wrap{max-width:1116px;margin:0 auto;padding:0 24px}
+.pc-btn{display:inline-flex;align-items:center;height:40px;padding:0 18px;border-radius:4px;border:1px solid var(--pc-green);background:var(--pc-green);color:#fff;font-weight:600;text-decoration:none}
+.pc-btn--ghost{background:transparent;color:var(--pc-ink);border-color:var(--pc-line)}
+.pc-card{background:#fff;border:1px solid var(--pc-line);border-radius:10px;padding:20px}
+.pc-badge{display:inline-block;padding:4px 9px;border-radius:99px;background:#eef1eb;color:#4b564f;font:500 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase}
+.pc-muted{color:#6b7280}

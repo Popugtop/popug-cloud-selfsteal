@@ -1,0 +1,51 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+import Terminal from '@popug/design/Terminal.astro';
+---
+<DocsLayout title="CLI" description="Install and use the popug command line tool." current="/cli/">
+  <h1>CLI</h1>
+  <p class="lede">The <code>popug</code> command line tool manages Storage, the CDN and API tokens from your terminal.</p>
+
+  <h2>Install</h2>
+  <Terminal><span class="c"># macOS and Linux (Homebrew)</span>
+brew install popug-cloud/tap/popug
+
+<span class="c"># or with npm</span>
+npm install --global @popug-cloud/cli</Terminal>
+  <p>Verify the installation:</p>
+  <Terminal>popug --version</Terminal>
+
+  <h2>Sign in</h2>
+  <Terminal>popug login</Terminal>
+  <p>In CI, skip the prompt and provide the token through the environment instead:</p>
+  <Terminal>export POPUG_TOKEN=pc_live_xxxxxxxxxxxxxxxx</Terminal>
+
+  <h2>Command reference</h2>
+  <table>
+    <thead><tr><th>Command</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>popug storage mb s3://&lt;bucket&gt;</code></td><td>Create a bucket</td></tr>
+      <tr><td><code>popug storage ls [s3://&lt;bucket&gt;]</code></td><td>List buckets or objects</td></tr>
+      <tr><td><code>popug storage upload &lt;file&gt; s3://&lt;bucket&gt;/&lt;key&gt;</code></td><td>Upload a file</td></tr>
+      <tr><td><code>popug storage rm s3://&lt;bucket&gt;/&lt;key&gt;</code></td><td>Delete an object</td></tr>
+      <tr><td><code>popug storage presign s3://&lt;bucket&gt;/&lt;key&gt;</code></td><td>Create a temporary download link</td></tr>
+      <tr><td><code>popug url s3://&lt;bucket&gt;/&lt;key&gt;</code></td><td>Print the public CDN URL</td></tr>
+      <tr><td><code>popug cdn purge s3://&lt;bucket&gt;/&lt;key&gt;</code></td><td>Purge an object from the CDN</td></tr>
+      <tr><td><code>popug token create</code></td><td>Create an API token</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Configuration</h2>
+  <table>
+    <thead><tr><th>Variable</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>POPUG_TOKEN</code></td><td>API token; overrides the saved login</td></tr>
+      <tr><td><code>POPUG_ENDPOINT</code></td><td>Storage endpoint (default <code>https://s3.popug.cloud</code>)</td></tr>
+      <tr><td><code>POPUG_NO_COLOR</code></td><td>Disable colored output</td></tr>
+    </tbody>
+  </table>
+  <p>The saved login lives in <code>~/.config/popug/config.toml</code>.</p>
+
+  <h2>Exit codes</h2>
+  <p><code>0</code> on success, <code>1</code> on a general error, <code>2</code> on invalid usage and <code>4</code> when authentication fails.</p>
+</DocsLayout>

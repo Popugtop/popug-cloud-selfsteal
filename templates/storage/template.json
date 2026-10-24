@@ -1,0 +1,1 @@
+{ "name": "storage", "kind": "node", "description": "S3-style object storage endpoint" }

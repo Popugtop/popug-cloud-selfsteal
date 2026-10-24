@@ -1,0 +1,33 @@
+---
+import Layout from '@popug/design/Layout.astro';
+import Logo from '@popug/design/Logo.astro';
+import Icon from '@popug/design/Icon.astro';
+import { links } from '@popug/design/site.ts';
+---
+<Layout title="Private beta — Popug Cloud Console" description="Console access is currently available by invitation." chrome={false}>
+  <main class="auth">
+    <a class="logo" href={links.home}><Logo /></a>
+    <div class="card box">
+      <div class="icon-plate amber"><Icon name="lock" size={26} /></div>
+      <span class="badge badge-amber">Private beta</span>
+      <h1>Console access is invite-only</h1>
+      <p class="sub">We are onboarding teams in small batches to keep the platform fast and reliable. Sign-ups are currently closed.</p>
+      <p class="sub">If you received an invitation, open the link in your email to finish setting up your account.</p>
+      <a class="btn full" href={links.docs}>Read the documentation</a>
+      <a class="btn full gap" href="/">Back to sign in</a>
+    </div>
+    <p class="fine"><a href={links.status}>System status</a></p>
+  </main>
+</Layout>
+<style is:global>
+  .auth { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 56px 20px 32px; background: linear-gradient(180deg, var(--glow), var(--bg) 320px); }
+  .auth .logo { margin-bottom: 28px; }
+  .box { width: 100%; max-width: 440px; padding: 28px; }
+  .box .icon-plate { margin-bottom: 16px; }
+  .box h1 { font-size: 1.5rem; letter-spacing: -.025em; margin-top: 12px; }
+  .box .sub { margin: 10px 0 0; font-size: 14.5px; line-height: 1.6; }
+  .full { width: 100%; margin-top: 22px; }
+  .gap { margin-top: 10px; }
+  .fine { margin-top: 24px; font-size: 13.5px; color: var(--ink-3); }
+  .fine a { color: var(--green-ink); text-decoration: underline; text-underline-offset: 3px; }
+</style>

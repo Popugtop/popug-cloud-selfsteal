@@ -1,0 +1,28 @@
+---
+import Logo from './Logo.astro';
+import { links } from './site.ts';
+const year = new Date().getFullYear();
+---
+<footer class="ftr">
+  <div class="wrap grid">
+    <div class="about">
+      <Logo size={26} />
+      <p>Storage, CDN and API for your next project.</p>
+    </div>
+    <div class="col"><h4>Products</h4><a href={`${links.home}/#products`}>Storage</a><a href={`${links.home}/#products`}>CDN</a><a href={`${links.home}/#products`}>API</a></div>
+    <div class="col"><h4>Resources</h4><a href={links.docs}>Documentation</a><a href={links.status}>System status</a></div>
+    <div class="col"><h4>Account</h4><a href={`${links.home}/#pricing`}>Pricing</a><a href={links.console}>Console</a></div>
+  </div>
+  <div class="wrap legal">© {year} Popug Cloud, Inc. All rights reserved.</div>
+</footer>
+<style>
+  .ftr { margin-top: 24px; padding: 48px 0 28px; border-top: 1px solid var(--line); background: var(--surface-2); }
+  .grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .about p { margin-top: 14px; font-size: 14.5px; max-width: 280px; }
+  .col { display: flex; flex-direction: column; gap: 10px; }
+  .col h4 { font: 500 11.5px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+  .col a { font-size: 14.5px; color: var(--ink-2); }
+  .col a:hover { color: var(--green); }
+  .legal { margin-top: 36px; font-size: 13px; color: var(--ink-3); }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr 1fr; } .about { grid-column: 1 / -1; } }
+</style>

@@ -1,0 +1,154 @@
+---
+import Layout from '@popug/design/Layout.astro';
+import Icon from '@popug/design/Icon.astro';
+import Terminal from '@popug/design/Terminal.astro';
+import HeroArt from '@popug/design/HeroArt.astro';
+import { links } from '@popug/design/site.ts';
+
+const products = [
+  { name: 'Storage', icon: 'database', badge: 'S3 compatible', amber: false, href: `${links.docs}/storage`,
+    text: 'S3-compatible object storage with high durability and simple access controls.' },
+  { name: 'CDN', icon: 'globe', badge: 'Global edge', amber: true, href: `${links.docs}/cdn`,
+    text: 'Fast global content delivery with intelligent caching and low latency.' },
+  { name: 'API', icon: 'code', badge: 'Simple REST API', amber: false, href: `${links.docs}/api`,
+    text: 'A clean and documented REST API to automate your infrastructure.' },
+] as const;
+
+const plans = [
+  { name: 'Starter', blurb: 'For personal projects and prototypes.', price: '$0',
+    items: ['10 GB storage', '100 GB CDN traffic', '1M API requests', 'Community support'] },
+  { name: 'Team', blurb: 'For small teams and growing products.', price: '$19', featured: true,
+    items: ['100 GB storage', '1 TB CDN traffic', '10M API requests', 'Email support'] },
+  { name: 'Scale', blurb: 'For high-traffic applications.', price: '$99',
+    items: ['1 TB storage', '10 TB CDN traffic', '100M API requests', 'Priority support'] },
+] as const;
+const termHtml = [
+  '<span class="c"># Upload a file with the Popug Cloud CLI</span>',
+  'popug storage upload ./image.jpg s3://my-bucket/image.jpg',
+  '',
+  '<span class="c"># Get a public URL (delivered via our CDN)</span>',
+  'popug url s3://my-bucket/image.jpg',
+  '<span class="u">https://cdn.popug.cloud/my-bucket/image.jpg</span>',
+].join('\n');
+---
+<Layout title="Popug Cloud — Storage, CDN and API for your next project" description="Popug Cloud is a simple cloud for builders: S3-compatible object storage, a global CDN and a clean REST API.">
+  <main>
+    <section class="hero">
+      <HeroArt />
+      <div class="wrap hero-in">
+        <div class="copy">
+          <p class="eyebrow">A simple cloud for builders</p>
+          <h1 class="h1">Storage, CDN and API<br /><span class="accent">for your next project</span></h1>
+          <p class="lead">Fast, reliable and easy to use cloud infrastructure. Store files, deliver them globally and build with a simple REST API.</p>
+          <div class="cta">
+            <a class="btn btn-primary" href={links.console}>Get started <Icon name="arrow" size={16} stroke={2} /></a>
+            <a class="btn" href={links.docs}>View docs</a>
+          </div>
+          <ul class="checks">
+            <li><Icon name="check" size={15} stroke={2} /> S3 compatible</li>
+            <li><Icon name="check" size={15} stroke={2} /> Global CDN</li>
+            <li><Icon name="check" size={15} stroke={2} /> Simple REST API</li>
+          </ul>
+        </div>
+        <div class="term-wrap">
+          <Terminal><Fragment set:html={termHtml} /></Terminal>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="products">
+      <div class="wrap">
+        <div class="head">
+          <div>
+            <p class="eyebrow">Our products</p>
+            <h2 class="h2">Everything you need, in one place</h2>
+          </div>
+          <p class="side">Object storage, a global edge network and a simple API. Designed to work together, so you can ship faster.</p>
+        </div>
+        <div class="cards">
+          {products.map((p) => (
+            <article class="card product">
+              <span class:list={['badge', { 'badge-amber': p.amber }]}>{p.badge}</span>
+              <div class:list={['icon-plate', { amber: p.amber }]}><Icon name={p.icon} size={26} /></div>
+              <h3>{p.name}</h3>
+              <p>{p.text}</p>
+              <a class="link-arrow" href={p.href}>Learn more <Icon name="arrow" size={15} stroke={2} /></a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="wrap">
+        <div class="head">
+          <div>
+            <p class="eyebrow">Pricing</p>
+            <h2 class="h2">Transparent pricing,<br />no surprises</h2>
+          </div>
+          <p class="side right">Start for free and scale as you grow.<br />All plans include storage, CDN and API access.</p>
+        </div>
+        <div class="cards">
+          {plans.map((p) => (
+            <article class:list={['card plan', { featured: 'featured' in p && p.featured }]}>
+              {'featured' in p && p.featured && <span class="badge badge-amber-strong">Most popular</span>}
+              <h3>{p.name}</h3>
+              <p class="blurb">{p.blurb}</p>
+              <p class="price"><strong>{p.price}</strong> <span>/ month</span></p>
+              <div class="plan-foot">
+                <ul>{p.items.map((i) => <li><Icon name="check" size={14} stroke={2} /> {i}</li>)}</ul>
+                <a class:list={['btn btn-sm', { 'btn-primary': 'featured' in p && p.featured }]} href={links.console}>Get started</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .hero { position: relative; overflow: hidden; padding: 36px 0 0; min-height: 330px; }
+  .hero-in { min-height: 294px; }
+  .hero-in { position: relative; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 56px; align-items: start; padding-bottom: 0; }
+  .copy .lead { margin-top: 22px; max-width: 520px; font-size: 1.12rem; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin: 26px 0 18px; }
+  .checks { display: flex; flex-wrap: wrap; gap: 14px 30px; font-size: 14px; color: var(--ink-2); }
+  .checks li { display: inline-flex; align-items: center; gap: 8px; }
+  .checks :global(svg) { color: var(--ink); }
+  .term-wrap { margin-top: 44px; }
+  @media (max-width: 900px) {
+    .hero-in { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+    .term-wrap { margin-top: 0; }
+    .hero { padding-top: 28px; }
+  }
+
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; margin-bottom: 24px; }
+  .side { max-width: 380px; font-size: 14.5px; line-height: 1.55; padding-bottom: 6px; }
+  .side.right { text-align: right; }
+  @media (max-width: 760px) { .head { flex-direction: column; align-items: flex-start; gap: 14px; } .side.right { text-align: left; } }
+
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  @media (max-width: 900px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+
+  .product { position: relative; padding: 18px 24px 22px; display: flex; flex-direction: column; gap: 10px; }
+  .product .badge { position: absolute; top: 20px; right: 18px; }
+  .product .icon-plate { margin-bottom: 4px; }
+  .product h3 { font-size: 1.28rem; letter-spacing: -.02em; }
+  .product p { font-size: 15px; line-height: 1.5; color: #5b6168; }
+  .product .link-arrow { margin-top: 6px; }
+
+  .plan { position: relative; padding: 20px 24px 20px; }
+  .plan.featured { border-color: var(--amber-line); }
+  .plan .badge { position: absolute; top: 16px; right: 16px; }
+  .plan h3 { font-size: 1.1rem; letter-spacing: -.015em; }
+  .blurb { font-size: 13px; margin-top: 6px; color: #5b6168; }
+  .price { margin-top: 14px; }
+  .price strong { font-size: 1.55rem; letter-spacing: -.03em; color: var(--ink); }
+  .price span { font-size: 13.5px; margin-left: 6px; color: var(--ink-2); }
+  .plan-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: 10px; }
+  .plan-foot ul { display: grid; gap: 3px; font-size: 13px; color: var(--ink-2); }
+  .plan-foot li { display: flex; align-items: center; gap: 9px; }
+  .plan-foot li :global(svg) { color: var(--ink); flex: none; }
+  .plan-foot .btn { min-width: 104px; }
+</style>
