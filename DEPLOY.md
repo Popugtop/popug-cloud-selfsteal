@@ -37,9 +37,9 @@ embedded. The archives are reproducible: building twice gives identical files.
 Publish with the GitHub CLI (or upload the same files in the web UI):
 
 ```bash
-git tag v0.1.1 && git push origin v0.1.1
-gh release create v0.1.1 release/* --repo Popugtop/popug-cloud-selfsteal \
-  --title "v0.1.1" --notes "Templates and installer v0.1.1"
+git tag v0.2.0 && git push origin v0.2.0
+gh release create v0.2.0 release/* --repo Popugtop/popug-cloud-selfsteal \
+  --title "v0.2.0" --notes "Templates and installer v0.2.0"
 ```
 
 Rules:
@@ -50,7 +50,7 @@ Rules:
 * Never rebuild and replace files of a published tag: nodes pin the hashes of that exact build.
   Changed something? Bump the version, rebuild, publish a new tag.
 * Sanity check after publishing, from any machine:
-  `curl -sL https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh | sha256sum`
+  `curl -sL https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.2.0/selfsteal.sh | sha256sum`
   must equal the `selfsteal.sh` line of `SHA256SUMS`.
 
 Before the first `git push`, keep working files out of the repository. A suggested `.gitignore` already
@@ -92,11 +92,15 @@ If port 80 is taken by another web server, go to [section 3](#3-a-node-that-alre
 ### 2.3 Install
 
 ```bash
-bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh) @ install
+bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/latest/download/selfsteal.sh) @ install
 ```
 
-It asks for the domain and the template (the suggestion is derived from the name: `*.cdn.*` → `cdn`,
-`*.api.*` → `api`, `*.s3.*` → `storage`, `*.registry.*` → `registry`, otherwise `default`).
+A wizard opens in the terminal (without `@ install` you get the main menu first). It asks for the domain,
+offers to check the DNS records immediately and shows the result (fix the record and choose "Check again", or
+skip), lets you pick the template with the arrow keys (the suggestion is derived from the name: `*.cdn.*` →
+`cdn`, `*.api.*` → `api`, `*.s3.*` → `storage`, `*.registry.*` → `registry`, otherwise `default`), then the
+port, an optional e-mail and the options (firewall, staging CA, node installer). The last screen shows
+everything; any line can be changed there, and nothing on the server is touched before you choose **Install**.
 Non-interactive:
 
 ```bash
@@ -178,7 +182,7 @@ on 443 of this node. It may keep serving HTTP on port 80 and the camouflage site
 
 ```bash
 # 1. get the installer once (any version you published)
-curl -fLo /tmp/selfsteal.sh https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh
+curl -fLo /tmp/selfsteal.sh https://github.com/Popugtop/popug-cloud-selfsteal/releases/latest/download/selfsteal.sh
 
 # 2. unpack the template for this node in "node" mode
 bash /tmp/selfsteal.sh @ prepare --out /var/www/selfsteal \
@@ -251,7 +255,7 @@ Ports 80/443 are already served by your Caddy; nothing needs to be opened or sto
 
 ```bash
 cp /etc/caddy/Caddyfile /etc/caddy/Caddyfile.bak-$(date +%F)       # backup first
-curl -fLo /tmp/selfsteal.sh https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh
+curl -fLo /tmp/selfsteal.sh https://github.com/Popugtop/popug-cloud-selfsteal/releases/latest/download/selfsteal.sh
 
 OUT=/var/www/selfsteal
 while IFS='|' read -r tpl hosts; do
@@ -301,7 +305,7 @@ still answer. `journalctl -u caddy -n 50` shows certificate problems.
 
 ### 4.5 Notes
 
-* **Updating:** publish a new release, re-run the loop with the new URL, `systemctl reload caddy`.
+* **Updating:** publish a new release, re-run the loop (the `latest` URL picks up the new installer), `systemctl reload caddy`.
 * **Status history:** the dates and bars of the status page are generated when `prepare` runs and are fixed
   afterwards. To refresh them, delete `/var/www/selfsteal/.selfsteal-stamp-status.popug.cloud` and re-run
   `prepare` for `status`, then reload.
@@ -337,6 +341,7 @@ still answer. `journalctl -u caddy -n 50` shows certificate problems.
 
 | Task | Command |
 |---|---|
+| Menu with all of the below | `selfsteal` |
 | State, container, listeners, certificate | `selfsteal status` |
 | Logs | `selfsteal logs -f` (or `--tail 200`) |
 | Restart Caddy | `selfsteal restart` |

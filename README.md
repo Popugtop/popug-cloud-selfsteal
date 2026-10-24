@@ -1,130 +1,214 @@
-# Popug Cloud — site, templates and the selfsteal installer
+<div align="center">
 
-This repository contains:
+# 🦜 Popug Cloud · selfsteal
 
-* **`popug.cloud`** — a small, static, fictional cloud platform site (storage, CDN, API);
-* **9 templates** — pages and API-style responses used as the camouflage site of a Reality
-  "self-steal" node and as the pages of the main domain;
-* **`selfsteal.sh`** — an installer that puts one of the templates on a server behind Caddy.
+**A camouflage website for Reality “self-steal” nodes — installed in one command, configured in a terminal wizard.**
 
-The VPN node itself (Remnanode / Xray) is **not** part of this project and is never modified.
-Xray listens on 443 and uses the site as its Reality `target`; this project only provides that site.
+[![release](https://img.shields.io/github/v/release/Popugtop/popug-cloud-selfsteal?style=flat-square&color=e58f33&label=release)](https://github.com/Popugtop/popug-cloud-selfsteal/releases/latest)
+![Debian 12+ / Ubuntu 22.04+](https://img.shields.io/badge/Debian_12+_·_Ubuntu_22.04+-2a5745?style=flat-square)
+![Caddy](https://img.shields.io/badge/Caddy-2.11-2a5745?style=flat-square)
+![shellcheck](https://img.shields.io/badge/shellcheck-clean-2f9e5c?style=flat-square)
+
+[Quick start](#-quick-start) · [The wizard](#-the-wizard) · [Templates](#-templates) · [Commands](#%EF%B8%8F-commands) · [Deployment guide](DEPLOY.md)
+
+</div>
+
+---
+
+Every node gets its own domain (`se1.cdn.popug.cloud`, `pl1.api.popug.cloud`, …) with a real Let's Encrypt
+certificate and a believable page behind it: a CDN edge, a JSON API, an S3 endpoint, a container registry.
+Xray owns port 443 and hands every non-Reality connection to that site; a scanner or a browser sees an ordinary
+service of a small cloud provider.
 
 ```
 client ──443──▶ Xray (Reality) ──non-Reality traffic──▶ 127.0.0.1:8443  Caddy + template
 ```
 
-## Quick start (a node)
+The node itself (Remnanode / Xray, managed from the Remnawave panel) is **not** installed or modified —
+this project only provides the site.
 
-DNS first: create an `A` record for the node, for example `se1.cdn.popug.cloud` → the node's IP.
-Then, as root on the node:
+## 🚀 Quick start
 
-```bash
-bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh) @ install
+1. **DNS.** Create an `A` record for the node, e.g. `se1.cdn.popug.cloud` → the node's IP
+   (no `AAAA` record pointing elsewhere).
+2. **Run** as root on the node:
+
+   ```bash
+   bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/latest/download/selfsteal.sh)
+   ```
+
+3. Choose **Install**, answer the wizard, then put the printed values into the node's Reality profile in the panel:
+
+   ```
+   serverNames : ["se1.cdn.popug.cloud"]
+   target/dest : "127.0.0.1:8443"
+   xver        : 0
+   ```
+
+That's it. Later just type `selfsteal` on the node to get the same menu.
+
+## 🧭 The wizard
+
+```
+  ┌  selfsteal 0.2.0  ·  install  · step 3/6
+  │
+  ◇  Domain     se1.cdn.popug.cloud
+  ◇  DNS        ✓ 203.0.113.10 — this server
+  │
+  ◆  Template
+  │  What a visitor or a scanner sees at https://se1.cdn.popug.cloud/
+  │
+  │    ○ api       JSON API gateway
+  │  ❯ ● cdn       Edge asset host  ★ suggested
+  │    ○ console   Console sign-in (invite-only notice)
+  │    ○ default   Neutral placeholder for any host
+  │    ○ docs      Documentation site
+  │    ○ registry  Container registry endpoint
+  │    ○ storage   S3-style object storage endpoint
+  │
+  └  ↑↓ move · enter select · ← back · ctrl+c quit
 ```
 
-The installer asks for the domain and the template (it suggests one from the name) and prints the
-values for the panel at the end. Non-interactive form:
+| Step | What happens |
+|---|---|
+| **Domain** | validated on enter; the hint shows this server's public IP for the A record |
+| **DNS check** | *check now* or *skip*. The check runs right there; on a mismatch you see why and can **check again**, **change the domain** or **continue anyway** |
+| **Template** | arrow keys; the one matching the name (`*.cdn.*` → `cdn`, `*.api.*` → `api`, `*.s3.*` → `storage`, …) is pre-selected |
+| **Port** | loopback port for Xray's target, `8443` by default; a busy port is reported immediately |
+| **E-mail** | optional, for Let's Encrypt expiry notices |
+| **Options** | ufw rules · enable ufw · staging certificate · offer the node installer afterwards |
+| **Review** | every value on one screen, any line can be changed — **nothing on the server is touched before *Install*** |
+
+Keys: `↑↓` move · `enter` select · `space` toggle · `←` back · `ctrl+c` quit.
+
+The main menu (`selfsteal` with no arguments) shows the current state and offers **Status, Re-configure,
+Template, Domain, Logs, Restart, Certificate, Update, Uninstall, Prepare**. An error in one action returns to
+the menu instead of closing it.
+
+### Without the wizard
+
+For scripts and mass roll-outs everything is still available as options:
 
 ```bash
-bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh) @ install \
+bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/latest/download/selfsteal.sh) @ install \
   --domain se1.cdn.popug.cloud --template cdn --yes
 ```
 
-Step-by-step guides (new node, node with an existing Caddy, main domain on a server with Caddy,
-updates, troubleshooting): see [DEPLOY.md](DEPLOY.md).
+`--yes`, no terminal, or `SELFSTEAL_NO_TUI=1` → nothing is asked. In a terminal, options given on the command
+line are pre-filled in the wizard; `install` with both `--domain` and `--template` skips it.
 
-## What gets installed
+## 🎭 Templates
 
-| Item | Value |
+| Template | For | Typical hosts | Answers |
+|---|---|---|---|
+| `cdn` | nodes | `se1.cdn.popug.cloud` | branded 404 on `/`, static files under `/assets/` |
+| `api` | nodes | `pl1.api.popug.cloud` | `{"service":"popug-api","status":"ok",…}`, JSON 401/404 |
+| `storage` | nodes | `us1.s3.popug.cloud` | S3-style XML: `AccessDenied`, `NoSuchBucket`, `InvalidBucketName` |
+| `registry` | nodes | `ru1.registry.popug.cloud` | short page, registry-style `401` on `/v2/` |
+| `default` | nodes | anything else | neutral “you have reached a Popug Cloud endpoint” page |
+| `root` | main server | `popug.cloud`, `www.popug.cloud` | landing page |
+| `docs` | main server | `docs.popug.cloud` | documentation: overview, quickstart, auth, storage, CDN, API, CLI |
+| `status` | main server | `status.popug.cloud` | status page with a 90-day history |
+| `console` | main server | `console.popug.cloud`, `auth.popug.cloud` | sign-in page and a “private beta” notice, no working form |
+
+Naming: `<country><n>.<role>.popug.cloud` — `cdn`: se1, se2, cz1, nl1, lv1, ee1, de1 · `api`: pl1, sg1 ·
+`s3`: us1, tr1 · `registry`: ru1. Main-server pages are added to an existing Caddy with `prepare`
+(see [DEPLOY.md §4](DEPLOY.md#4-the-main-domain-on-a-server-where-caddy-apt-already-runs)).
+
+Everything is static: no backend, no external fonts / CDNs / analytics, no JavaScript, no forms that send data.
+
+### Every node looks a little different
+
+A seed (domain + machine-id) makes each installation unique but stable across re-installs:
+
+- asset file names are hashed and references rewritten;
+- `Last-Modified` / `ETag` differ;
+- build id, API version, `HostId` in XML errors, dates and uptime history change;
+- the order of some lists changes;
+- no `Server` header anywhere (404s included), proper cache and security headers.
+
+## ⌨️ Commands
+
+```
+selfsteal                     interactive menu
+selfsteal install             install or re-apply (idempotent)
+selfsteal update [--to TAG]   newer installer + templates; settings and certificates are kept
+selfsteal status              state, container, listeners, certificate
+selfsteal logs [-f] [--tail N]
+selfsteal restart
+selfsteal template [NAME]     switch the template (no NAME → picker)
+selfsteal domain [NAME]       switch the domain (no NAME → wizard with DNS check)
+selfsteal cert                discard and re-issue the certificate
+selfsteal uninstall [--purge] remove the site (--purge also deletes certificates)
+selfsteal templates           list templates
+selfsteal prepare             only unpack a template for an EXISTING Caddy
+```
+
+<details>
+<summary><b>All options</b></summary>
+
+| Option | Meaning |
 |---|---|
-| Web server | official `caddy` image (version pinned by digest), run with Docker Compose, `network_mode: host` |
-| Docker | installed from the official apt repository if it is missing |
-| Directory | `/opt/selfsteal/` (`docker-compose.yml`, `Caddyfile`, `snippet.caddy`, `site/`, `state.env`) |
+| `--domain NAME` | node host name (A/AAAA must point to this server) |
+| `--template NAME` | template to serve |
+| `--port N` | loopback port for Xray's target (default `8443`) |
+| `--email ADDR` | contact e-mail for the certificate authority |
+| `--staging` | Let's Encrypt staging CA for this run (tests) |
+| `--skip-dns-check` | do not verify the DNS records |
+| `--no-ufw` / `--enable-ufw` | do not touch the firewall / install and enable ufw |
+| `--with-node` | afterwards offer to run the third-party `remnanode.sh` (downloaded and run as root, **not verified**) |
+| `--seed STRING` | randomization seed |
+| `--purge` | with `uninstall`: also delete certificates and volumes |
+| `--out DIR`, `--mode public\|node` | for `prepare` |
+| `-y`, `--yes` | never ask; fail if something required is missing |
+
+Every option also works as `SELFSTEAL_<NAME>` (for example `SELFSTEAL_DOMAIN`).
+
+</details>
+
+## 📦 What gets installed
+
+| | |
+|---|---|
+| Web server | official `caddy` image pinned by digest, Docker Compose, `network_mode: host` |
+| Docker | from the official apt repository, only if missing |
+| Files | `/opt/selfsteal/` — `docker-compose.yml`, `Caddyfile`, `snippet.caddy`, `site/`, `state.env` |
 | Command | `/usr/local/bin/selfsteal` |
-| Listens on | `127.0.0.1:8443` (TLS, for Xray) and `:80` (certificate challenge + redirect to https) |
-| Certificate | Let's Encrypt, HTTP-01, for exactly the node's domain (TLS-ALPN is disabled — 443 belongs to Xray) |
-| Firewall | ufw only: allows ssh (detected from sshd), 80 and 443. Existing rules are never reset. |
+| Listens on | `127.0.0.1:8443` (TLS, for Xray) and `:80` (certificate challenge + redirect) |
+| Certificate | Let's Encrypt, HTTP-01, exactly the node's domain (TLS-ALPN off — 443 belongs to Xray) |
+| Firewall | ufw only: ssh (detected), 80, 443. Existing rules are never reset |
 
-Requirements: Debian 12+ or Ubuntu 22.04+, root, free port 80, a domain whose A/AAAA records point
-to the server. Port 443 is expected to be used by Xray.
+Requirements: Debian 12+ or Ubuntu 22.04+, root, free port 80, a domain pointing to the server.
 
-## Templates
+## 🔄 Updating
 
-| Template | Typical hosts | Answers |
-|---|---|---|
-| `cdn` | `se1.cdn.popug.cloud`, `cdn.popug.cloud` | branded 404 on `/`, static files under `/assets/` |
-| `api` | `pl1.api.popug.cloud`, `api.popug.cloud` | `{"service":"popug-api","status":"ok","version":"…"}` on `/`, JSON 401/404 |
-| `storage` | `us1.s3.popug.cloud`, `s3.popug.cloud` | S3-style XML: `AccessDenied`, `NoSuchBucket`, `InvalidBucketName` |
-| `registry` | `ru1.registry.popug.cloud` | short page, registry-style `401` on `/v2/` |
-| `default` | any node without a specific role | neutral "you have reached a Popug Cloud endpoint" page |
-| `root` | `popug.cloud`, `www.popug.cloud` | landing page |
-| `docs` | `docs.popug.cloud` | documentation (overview, quickstart, auth, storage, CDN, API, CLI) |
-| `status` | `status.popug.cloud` | status page with a 90-day history |
-| `console` | `console.popug.cloud`, `auth.popug.cloud` | sign-in page and a "private beta" page, no working form |
+On a node: `selfsteal update` (or **Update** in the menu) fetches the installer of the latest release and
+re-applies the site; domain, template, port and certificates are kept. Pin a version with `--to 0.2.0`.
+For servers using `prepare`, re-run it and reload Caddy. Details: [DEPLOY.md §5](DEPLOY.md#5-updating-templates-on-all-servers).
 
-Host names follow `<country><n>.<role>.popug.cloud`. Role layout used here:
-`cdn` — se1, se2, cz1, nl1, lv1, ee1, de1; `api` — pl1, sg1; `storage` (`*.s3`) — us1, tr1; `registry` — ru1.
-`docs`, `status` and `console` are single pages for the main server, not for nodes.
+## 🔒 Integrity and safety
 
-Everything is static: no backend, no external fonts/CDNs/analytics, no JavaScript, no forms that send data.
+- Template archives come from the GitHub release of the **same version** as the installer and are checked against
+  SHA256 values embedded in it; a mismatch aborts without touching the site.
+- The installer's own checksum is in `SHA256SUMS` of every release.
+- The Caddy image is pinned by digest.
+- No secrets in URLs, arguments, logs or state files; Reality keys stay in the panel.
 
-## Commands
+## 🛠 Development
 
-```
-selfsteal install            install or re-apply (idempotent)
-selfsteal update [--to TAG]  fetch a newer installer release and re-apply
-selfsteal uninstall [--purge]
-selfsteal status | logs [-f] [--tail N] | restart
-selfsteal template [NAME]    switch template without reinstalling
-selfsteal domain [NAME]      switch domain
-selfsteal cert               discard and re-issue the certificate
-selfsteal templates          list templates
-selfsteal prepare            only unpack a template for an EXISTING Caddy (see DEPLOY.md)
+```bash
+npm install
+node tools/build-release.mjs --repo Popugtop/popug-cloud-selfsteal   # → release/
+test/gallery.sh                                   # screenshots of every page → docs/gallery/
+test/e2e/run.sh                                   # full installer test: clean Debian 12 + Pebble (needs Docker)
+test/e2e/existing-caddy.sh debian|cloudsmith      # `prepare` against an apt Caddy
 ```
 
-Options: `--domain`, `--template`, `--port` (default 8443), `--email`, `--staging`
-(Let's Encrypt staging), `--skip-dns-check`, `--no-ufw`, `--enable-ufw`, `--with-node`, `--seed`,
-`--purge`, `--out`/`--mode` (prepare), `-y/--yes`, `-h/--help`. Every option also works as
-`SELFSTEAL_<NAME>` (for example `SELFSTEAL_DOMAIN`).
+The end-to-end tests issue real certificates from a local ACME server (Pebble) and never contact Let's Encrypt.
+Shell scripts are kept clean under `shellcheck -S style`. Publishing a release: [DEPLOY.md §1](DEPLOY.md#1-publishing-a-release).
 
-`--with-node` (off by default) offers to run the third-party `remnanode.sh` afterwards. That script is
-downloaded and executed as root and is **not** verified by this installer.
-
-## Values for the panel
-
-At the end of `install` the installer prints them. For a node `se1.cdn.popug.cloud`:
-
-```
-serverNames : ["se1.cdn.popug.cloud"]
-target/dest : "127.0.0.1:8443"
-xver        : 0
-```
-
-and an `realitySettings` fragment with placeholders for the key pair and short ids (they come from the panel;
-the installer never generates or stores them).
-
-## Per-node randomization
-
-Every installation is slightly different, derived from a seed (domain + machine-id), so the same
-node always gets the same result and different nodes do not serve identical bytes:
-
-* asset file names are replaced with hashes, references rewritten;
-* `Last-Modified` / `ETag` values differ;
-* build id, API version, `HostId` in XML errors, dates and uptime in the status history change;
-* the order of some lists changes;
-* Caddy sends no `Server` header (also on 404s), with proper cache and security headers.
-
-## Integrity and safety
-
-* Template archives are downloaded from the GitHub release of the **same version** as the installer
-  and verified against SHA256 values embedded in the installer. A mismatch aborts without touching the site.
-* The installer itself is fetched over HTTPS from GitHub; its own checksum is listed in `SHA256SUMS`
-  of the release if you want to check it by hand.
-* No secrets are passed in URLs or arguments and none are written to logs or state files.
-* The Caddy image is pinned by digest.
-
-## Repository layout
+<details>
+<summary><b>Repository layout</b></summary>
 
 ```
 packages/design/   design tokens and shared components (Astro)
@@ -132,18 +216,7 @@ sites/root/        the popug.cloud landing page
 templates/<name>/  one directory per template (+ caddy/Caddyfile.snippet, template.json)
 installer/         selfsteal.sh (release data is embedded at build time)
 tools/             build-release.mjs (archives, checksums, installer), randomize.sh
-test/              serve.sh, curl-all.sh, shoot.mjs, gallery.sh, e2e/ (Debian 12 + Pebble)
+test/              serve.sh, curl-all.sh, shoot.mjs, gallery.sh, e2e/
 ```
 
-## Development
-
-```bash
-npm install
-node tools/build-release.mjs --repo Popugtop/popug-cloud-selfsteal   # writes release/
-test/gallery.sh                 # screenshots of every page → docs/gallery/index.html
-test/e2e/run.sh                 # full installer test in a clean Debian 12 (needs Docker)
-test/e2e/existing-caddy.sh debian|cloudsmith   # `prepare` against a Caddy installed with apt
-```
-
-The end-to-end tests issue real certificates from a local ACME test server (Pebble); they never
-contact Let's Encrypt or any of your servers. Shell scripts are kept clean under `shellcheck -S style`.
+</details>

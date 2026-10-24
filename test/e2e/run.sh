@@ -113,7 +113,8 @@ check "logs work" 'selfsteal logs --tail 3 | grep -q .'
 check "restart works" 'selfsteal restart'
 
 say "== update (re-apply from the installer of the same release)"
-LINES_MAX=8 run "$ENVV selfsteal update --to 0.1.1 --yes"
+VER=$(node -p "require('$root/package.json').version")
+LINES_MAX=8 run "$ENVV selfsteal update --to $VER --yes"
 check "site still answers after update" "curl -s --cacert /root/pebble-root.pem --resolve $D2:8443:127.0.0.1 -o /dev/null https://$D2:8443/"
 
 say "== uninstall"
