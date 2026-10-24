@@ -20,14 +20,14 @@ DNS first: create an `A` record for the node, for example `se1.cdn.popug.cloud` 
 Then, as root on the node:
 
 ```bash
-bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.0/selfsteal.sh) @ install
+bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh) @ install
 ```
 
 The installer asks for the domain and the template (it suggests one from the name) and prints the
 values for the panel at the end. Non-interactive form:
 
 ```bash
-bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.0/selfsteal.sh) @ install \
+bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh) @ install \
   --domain se1.cdn.popug.cloud --template cdn --yes
 ```
 

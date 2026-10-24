@@ -1,5 +1,5 @@
 == build release
-release 0.1.0: 9 templates
+release 0.1.1: 9 templates
 == start a clean Debian 12 container (no Docker inside)
   PASS  docker is NOT installed yet
 == argument handling
@@ -22,8 +22,8 @@ $ SELFSTEAL_BASE_URL=http://127.0.0.1:8099 SELFSTEAL_READY_TIMEOUT=6 bash /relea
  Container selfsteal-caddy Started 
 • waiting for the certificate (HTTP-01 for se1.cdn.popug.cloud)…
 ✗ the site did not become ready in time. Errors reported by Caddy:
-selfsteal-caddy  | {"level":"error","ts":1792856153.9414911,"logger":"tls.obtain","msg":"could not get certificate from issuer","identifier":"se1.cdn.popug.cloud","issuer":"localhost:14000-dir","error":"registering account [] with server: provisioning client: performing request: Get \"https://localhost:14000/dir\": dial tcp [::1]:14000: connect: connection refused"}
-selfsteal-caddy  | {"level":"error","ts":1792856153.9415424,"logger":"tls.obtain","msg":"will retry","error":"[se1.cdn.popug.cloud] Obtain: registering account [] with server: provisioning client: performing request: Get \"https://localhost:14000/dir\": dial tcp [::1]:14000: connect: connection refused","attempt":1,"retrying_in":60,"elapsed":0.512414292,"max_duration":2592000}
+selfsteal-caddy  | {"level":"error","ts":1792858826.231241,"logger":"tls.obtain","msg":"could not get certificate from issuer","identifier":"se1.cdn.popug.cloud","issuer":"localhost:14000-dir","error":"registering account [] with server: provisioning client: performing request: Get \"https://localhost:14000/dir\": dial tcp [::1]:14000: connect: connection refused"}
+selfsteal-caddy  | {"level":"error","ts":1792858826.231289,"logger":"tls.obtain","msg":"will retry","error":"[se1.cdn.popug.cloud] Obtain: registering account [] with server: provisioning client: performing request: Get \"https://localhost:14000/dir\": dial tcp [::1]:14000: connect: connection refused","attempt":1,"retrying_in":60,"elapsed":0.507123375,"max_duration":2592000}
 ✗ check that port 80 is reachable from the internet and that se1.cdn.popug.cloud points here
   PASS  Docker was installed by the installer
   PASS  state file and compose file exist
@@ -33,11 +33,11 @@ Unable to find image 'ghcr.io/letsencrypt/pebble-challtestsrv:latest' locally
 latest: Pulling from letsencrypt/pebble-challtestsrv
 f05b7051dbd3: Pulling fs layer
 3fbcc755fda7: Pulling fs layer
-f05b7051dbd3: Download complete
 3844c38c9974: Download complete
+f05b7051dbd3: Download complete
 3fbcc755fda7: Download complete
-f05b7051dbd3: Pull complete
 3fbcc755fda7: Pull complete
+f05b7051dbd3: Pull complete
 Digest: sha256:12ce21884def456bcf9786542113949e1f19dc7738d2c70e156c2d0c38a1405b
 Status: Downloaded newer image for ghcr.io/letsencrypt/pebble-challtestsrv:latest
 Unable to find image 'ghcr.io/letsencrypt/pebble:latest' locally
@@ -55,8 +55,8 @@ Status: Downloaded newer image for ghcr.io/letsencrypt/pebble:latest
 == re-run install (idempotent; must retry issuance and succeed)
 $ SELFSTEAL_BASE_URL=http://127.0.0.1:8099 bash /release/selfsteal.sh @ install --domain se1.cdn.popug.cloud --template cdn --acme-ca https://localhost:14000/dir --acme-ca-root /root/pebble.minica.pem --skip-dns-check --yes
 ! nothing listens on 443 yet; Xray must be configured to use 127.0.0.1:8443 as its target
-• downloading template 'cdn' (v0.1.0)
-✓ checksum verified (4411ae407d54e902ffeb23053110f7e62fd633ed707f28d21a289f7ef0c89336)
+• downloading template 'cdn' (v0.1.1)
+✓ checksum verified (6fbb4aab27efe2cd8244dd4590b778b392291bba502c8f7793af3cca74c726d2)
 • starting Caddy
 • validating the Caddy configuration
  Container selfsteal-caddy Running 
@@ -157,44 +157,44 @@ $ SELFSTEAL_BASE_URL=http://127.0.0.1:8099 selfsteal cert --yes
 ! discarding the stored certificate for de1.cdn.popug.cloud and requesting a new one
  Container selfsteal-caddy Stopping 
  Container selfsteal-caddy Stopped 
- Container selfsteal-caddy-run-b007e5d82e97 Creating 
- Container selfsteal-caddy-run-b007e5d82e97 Created 
+ Container selfsteal-caddy-run-97e5ac901c98 Creating 
+ Container selfsteal-caddy-run-97e5ac901c98 Created 
  Container selfsteal-caddy Starting 
  Container selfsteal-caddy Started 
 • waiting for the certificate (HTTP-01 for de1.cdn.popug.cloud)…
 ✓ site answers on 127.0.0.1:8443 (HTTP 404)
   subject=
-  issuer=CN = Pebble Intermediate CA 775bc0
-  notAfter=Jan 22 15:36:39 2027 GMT
+  issuer=CN = Pebble Intermediate CA 0eba29
+  notAfter=Jan 22 16:21:10 2027 GMT
   PASS  certificate valid after re-issue
 $ selfsteal status
 
-selfsteal 0.1.0: status
+selfsteal 0.1.1: status
   domain   : de1.cdn.popug.cloud
   template : cdn
   target   : 127.0.0.1:8443
-  seed     : f1343d13…
+  seed     : 7cb0c3ec…
   caddy    : Up 2 seconds
   listening:
     127.0.0.1:8443
     *:80
   certificate:
     subject=
-    issuer=CN = Pebble Intermediate CA 775bc0
-    notAfter=Jan 22 15:36:39 2027 GMT
+    issuer=CN = Pebble Intermediate CA 0eba29
+    notAfter=Jan 22 16:21:10 2027 GMT
   PASS  status shows domain and certificate
   PASS  logs work
   PASS  restart works
 == update (re-apply from the installer of the same release)
-$ SELFSTEAL_BASE_URL=http://127.0.0.1:8099 selfsteal update --to 0.1.0 --yes
-• downloading template 'cdn' (v0.1.0)
-✓ checksum verified (4411ae407d54e902ffeb23053110f7e62fd633ed707f28d21a289f7ef0c89336)
+$ SELFSTEAL_BASE_URL=http://127.0.0.1:8099 selfsteal update --to 0.1.1 --yes
+• downloading template 'cdn' (v0.1.1)
+✓ checksum verified (6fbb4aab27efe2cd8244dd4590b778b392291bba502c8f7793af3cca74c726d2)
 • starting Caddy
 • validating the Caddy configuration
  Container selfsteal-caddy Running 
 • waiting for the certificate (HTTP-01 for de1.cdn.popug.cloud)…
 ✓ site answers on 127.0.0.1:8443 (HTTP 404)
-✓ applied v0.1.0
+✓ applied v0.1.1
   PASS  site still answers after update
 == uninstall
 $ selfsteal uninstall --yes --purge

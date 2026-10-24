@@ -37,9 +37,9 @@ embedded. The archives are reproducible: building twice gives identical files.
 Publish with the GitHub CLI (or upload the same files in the web UI):
 
 ```bash
-git tag v0.1.0 && git push origin v0.1.0
-gh release create v0.1.0 release/* --repo Popugtop/popug-cloud-selfsteal \
-  --title "v0.1.0" --notes "Templates and installer v0.1.0"
+git tag v0.1.1 && git push origin v0.1.1
+gh release create v0.1.1 release/* --repo Popugtop/popug-cloud-selfsteal \
+  --title "v0.1.1" --notes "Templates and installer v0.1.1"
 ```
 
 Rules:
@@ -50,7 +50,7 @@ Rules:
 * Never rebuild and replace files of a published tag: nodes pin the hashes of that exact build.
   Changed something? Bump the version, rebuild, publish a new tag.
 * Sanity check after publishing, from any machine:
-  `curl -sL https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.0/selfsteal.sh | sha256sum`
+  `curl -sL https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh | sha256sum`
   must equal the `selfsteal.sh` line of `SHA256SUMS`.
 
 Before the first `git push`, keep working files out of the repository. A suggested `.gitignore` already
@@ -92,7 +92,7 @@ If port 80 is taken by another web server, go to [section 3](#3-a-node-that-alre
 ### 2.3 Install
 
 ```bash
-bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.0/selfsteal.sh) @ install
+bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh) @ install
 ```
 
 It asks for the domain and the template (the suggestion is derived from the name: `*.cdn.*` → `cdn`,
@@ -178,7 +178,7 @@ on 443 of this node. It may keep serving HTTP on port 80 and the camouflage site
 
 ```bash
 # 1. get the installer once (any version you published)
-curl -Lo /tmp/selfsteal.sh https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.0/selfsteal.sh
+curl -fLo /tmp/selfsteal.sh https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh
 
 # 2. unpack the template for this node in "node" mode
 bash /tmp/selfsteal.sh @ prepare --out /var/www/selfsteal \
@@ -251,10 +251,11 @@ Ports 80/443 are already served by your Caddy; nothing needs to be opened or sto
 
 ```bash
 cp /etc/caddy/Caddyfile /etc/caddy/Caddyfile.bak-$(date +%F)       # backup first
-curl -Lo /tmp/selfsteal.sh https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.0/selfsteal.sh
+curl -fLo /tmp/selfsteal.sh https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.1.1/selfsteal.sh
 
 OUT=/var/www/selfsteal
 while IFS='|' read -r tpl hosts; do
+  [ -n "$tpl" ] || continue            # tolerate blank lines from copy/paste
   bash /tmp/selfsteal.sh @ prepare --out "$OUT" --template "$tpl" --domain "$hosts" --yes
 done <<'EOF'
 root|popug.cloud,www.popug.cloud
@@ -272,10 +273,12 @@ Each block is a normal Caddy site (`host1, host2 { … }`) with the template's h
 
 ### 4.3 Connect it to the existing Caddyfile
 
-Add **one line** at the end of `/etc/caddy/Caddyfile` (outside any block); do not change your other sites:
+Add **one line** at the end of the file `/etc/caddy/Caddyfile` (outside any block); do not change your other sites.
+This is a line of the Caddyfile, not a shell command. This appends it once:
 
-```caddyfile
-import /var/www/selfsteal/*.caddy
+```bash
+grep -q 'import /var/www/selfsteal/\*.caddy' /etc/caddy/Caddyfile || echo 'import /var/www/selfsteal/*.caddy' >> /etc/caddy/Caddyfile
+tail -n 3 /etc/caddy/Caddyfile
 ```
 
 If one of these domains is already defined in the Caddyfile, Caddy reports a duplicate site address — remove or
@@ -289,10 +292,7 @@ systemctl reload caddy
 ### 4.4 Verify
 
 ```bash
-for h in popug.cloud www.popug.cloud docs.popug.cloud status.popug.cloud console.popug.cloud \
-         auth.popug.cloud api.popug.cloud cdn.popug.cloud s3.popug.cloud; do
-  printf '%-24s ' "$h"; curl -s -o /dev/null -w '%{http_code}\n' "https://$h/"
-done
+for h in popug.cloud www.popug.cloud docs.popug.cloud status.popug.cloud console.popug.cloud auth.popug.cloud api.popug.cloud cdn.popug.cloud s3.popug.cloud; do printf '%-24s %s\n' "$h" "$(curl -s -o /dev/null -w '%{http_code}' https://$h/)"; done
 ```
 
 Expected: `200` for root, www, docs, status, console, auth and api; `404` for cdn; `403` for s3 (S3-style

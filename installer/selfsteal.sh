@@ -87,7 +87,7 @@ Options:
   --template NAME    template to serve (see: selfsteal templates)
   --port N           loopback port for Xray's target (default ${DEFAULT_PORT})
   --email ADDR       contact e-mail for the certificate authority (optional)
-  --staging          use the Let's Encrypt staging CA (for tests)
+  --staging          use the Let's Encrypt staging CA for this run only (for tests)
   --skip-dns-check   do not verify that the domain points to this server
   --no-ufw           do not touch the firewall
   --enable-ufw       install/enable ufw if needed (default: only add rules to an active ufw)
@@ -249,15 +249,14 @@ compose() { (cd "$APP_DIR" && docker compose "$@"); }
 # ---------------------------------------------------------------- state -----
 load_state() {
   if [ -r "$STATE_FILE" ]; then
-    local s_domain="" s_template="" s_port="" s_seed="" s_ts="" s_ca="" s_root="" s_email="" s_staging=""
+    local s_domain="" s_template="" s_port="" s_seed="" s_ts="" s_ca="" s_root="" s_email=""
     # shellcheck disable=SC1090
     . "$STATE_FILE"
     s_domain=${S_DOMAIN:-}; s_template=${S_TEMPLATE:-}; s_port=${S_PORT:-}; s_seed=${S_SEED:-}
-    s_ts=${S_TS:-}; s_ca=${S_ACME_CA:-}; s_root=${S_ACME_CA_ROOT:-}; s_email=${S_EMAIL:-}; s_staging=${S_STAGING:-}
+    s_ts=${S_TS:-}; s_ca=${S_ACME_CA:-}; s_root=${S_ACME_CA_ROOT:-}; s_email=${S_EMAIL:-}
     DOMAIN=${DOMAIN:-$s_domain}; TEMPLATE=${TEMPLATE:-$s_template}; PORT=${PORT:-$s_port}
     SEED=${SEED:-$s_seed}; FIRST_TS=${s_ts:-}; ACME_CA=${ACME_CA:-$s_ca}; ACME_CA_ROOT=${ACME_CA_ROOT:-$s_root}
     ACME_EMAIL=${ACME_EMAIL:-$s_email}
-    [ "$STAGING" -eq 1 ] || STAGING=${s_staging:-0}
     STATE_LOADED=1
   fi
 }
@@ -276,7 +275,6 @@ save_state() {
     printf 'S_ACME_CA=%q\n' "$ACME_CA"
     printf 'S_ACME_CA_ROOT=%q\n' "$ACME_CA_ROOT"
     printf 'S_EMAIL=%q\n' "$ACME_EMAIL"
-    printf 'S_STAGING=%q\n' "$STAGING"
   } > "$STATE_FILE.new"
   chmod 600 "$STATE_FILE.new"
   mv "$STATE_FILE.new" "$STATE_FILE"
@@ -321,7 +319,8 @@ dns_check() {
   local d=$1 a4 a6 ips pub="" ip match=0
   if [ "$SKIP_DNS" -eq 1 ]; then warn "DNS check skipped"; return 0; fi
   a4=$(getent ahostsv4 "$d" 2>/dev/null | awk '{print $1}' | sort -u || true)
-  a6=$(getent ahostsv6 "$d" 2>/dev/null | awk '{print $1}' | sort -u || true)
+  # getent may return IPv4-mapped addresses (::ffff:a.b.c.d) when there is no AAAA record: ignore them
+  a6=$(getent ahostsv6 "$d" 2>/dev/null | awk '{print $1}' | grep -vi '^::ffff:' | sort -u || true)
   [ -n "$a4$a6" ] || die "$d does not resolve. Create an A record pointing to this server first (or use --skip-dns-check)."
   ips=$(local_ips)
   for ip in $a4 $a6; do
