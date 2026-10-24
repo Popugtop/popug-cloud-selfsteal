@@ -1080,7 +1080,7 @@ wait_ready() {
   [ "$live" -eq 0 ] || printf '\r\033[K'
   err "the site did not become ready in time. Errors reported by Caddy:"
   compose logs --no-color caddy 2>&1 | grep -E '"level":"(error|fatal)"' | tail -n 6 >&2 || true
-  die "check that port 80 is reachable from the internet and that $DOMAIN points here"
+  die "check that port 80 is reachable from the internet and that $DOMAIN points here; then retry with: selfsteal install (logs: selfsteal logs)"
 }
 
 cert_info() {
@@ -1193,9 +1193,11 @@ cmd_install() {
   stage "DNS";         dns_check "$DOMAIN"
   stage "Docker";      ensure_docker; check_ports
   stage "Template";    TMP=$(mktemp -d); fetch_template "$TEMPLATE"; mkdir -p "$APP_DIR"; apply_template; write_configs; save_state
+  # the command goes in before Caddy starts: if the certificate fails, `selfsteal` is there to retry or debug
+  install_self
   stage "Caddy";       start_site
   stage "Certificate"; wait_ready
-  stage "Finishing";   configure_ufw; install_self
+  stage "Firewall";    configure_ufw
   print_summary
   if [ "$WITH_NODE" -eq 1 ]; then offer_node; fi
 }

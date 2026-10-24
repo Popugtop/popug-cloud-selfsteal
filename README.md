@@ -2,42 +2,42 @@
 
 # 🦜 Popug Cloud · selfsteal
 
-**A camouflage website for Reality “self-steal” nodes — installed in one command, configured in a terminal wizard.**
+**Сайт-маскировка для Reality-нод в режиме «self-steal»: ставится одной командой, настраивается в мастере прямо в терминале.**
 
 [![release](https://img.shields.io/github/v/release/Popugtop/popug-cloud-selfsteal?style=flat-square&color=e58f33&label=release)](https://github.com/Popugtop/popug-cloud-selfsteal/releases/latest)
 ![Debian 12+ / Ubuntu 22.04+](https://img.shields.io/badge/Debian_12+_·_Ubuntu_22.04+-2a5745?style=flat-square)
 ![Caddy](https://img.shields.io/badge/Caddy-2.11-2a5745?style=flat-square)
 ![shellcheck](https://img.shields.io/badge/shellcheck-clean-2f9e5c?style=flat-square)
 
-[Quick start](#-quick-start) · [The wizard](#-the-wizard) · [Templates](#-templates) · [Commands](#%EF%B8%8F-commands) · [Deployment guide](DEPLOY.md)
+[Быстрый старт](#-быстрый-старт) · [Мастер установки](#-мастер-установки) · [Шаблоны](#-шаблоны) · [Команды](#%EF%B8%8F-команды) · [Переустановка](#-переустановка-и-удаление) · [DEPLOY.md](DEPLOY.md)
 
 </div>
 
 ---
 
-Every node gets its own domain (`se1.cdn.popug.cloud`, `pl1.api.popug.cloud`, …) with a real Let's Encrypt
-certificate and a believable page behind it: a CDN edge, a JSON API, an S3 endpoint, a container registry.
-Xray owns port 443 and hands every non-Reality connection to that site; a scanner or a browser sees an ordinary
-service of a small cloud provider.
+У каждой ноды свой домен (`se1.cdn.popug.cloud`, `pl1.api.popug.cloud`, …), настоящий сертификат Let's Encrypt
+и правдоподобная страница за ним: CDN-узел, JSON API, S3-эндпоинт, container registry. Порт 443 держит Xray и
+отдаёт этому сайту всё, что не является Reality-подключением. Сканер или браузер видит обычный сервис небольшого
+облачного провайдера.
 
 ```
-client ──443──▶ Xray (Reality) ──non-Reality traffic──▶ 127.0.0.1:8443  Caddy + template
+клиент ──443──▶ Xray (Reality) ──не-Reality трафик──▶ 127.0.0.1:8443  Caddy + шаблон
 ```
 
-The node itself (Remnanode / Xray, managed from the Remnawave panel) is **not** installed or modified —
-this project only provides the site.
+Саму ноду (Remnanode / Xray, управляется из панели Remnawave) скрипт **не ставит и не меняет** — он отвечает
+только за сайт.
 
-## 🚀 Quick start
+## 🚀 Быстрый старт
 
-1. **DNS.** Create an `A` record for the node, e.g. `se1.cdn.popug.cloud` → the node's IP
-   (no `AAAA` record pointing elsewhere).
-2. **Run** as root on the node:
+1. **DNS.** Создай `A`-запись для ноды, например `se1.cdn.popug.cloud` → IP ноды
+   (и не оставляй `AAAA`-запись, которая указывает куда-то ещё).
+2. **Запусти** на ноде от root:
 
    ```bash
    bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/latest/download/selfsteal.sh)
    ```
 
-3. Choose **Install**, answer the wizard, then put the printed values into the node's Reality profile in the panel:
+3. Выбери **Install**, пройди мастер и перенеси значения, которые он напечатает, в Reality-профиль ноды в панели:
 
    ```
    serverNames : ["se1.cdn.popug.cloud"]
@@ -45,12 +45,12 @@ this project only provides the site.
    xver        : 0
    ```
 
-That's it. Later just type `selfsteal` on the node to get the same menu.
+Всё. Дальше на ноде достаточно набрать `selfsteal` — откроется то же меню.
 
-## 🧭 The wizard
+## 🧭 Мастер установки
 
 ```
-  ┌  selfsteal 0.2.0  ·  install  · step 3/6
+  ┌  selfsteal 0.2.1  ·  install  · step 3/6
   │
   ◇  Domain     se1.cdn.popug.cloud
   ◇  DNS        ✓ 203.0.113.10 — this server
@@ -69,153 +69,169 @@ That's it. Later just type `selfsteal` on the node to get the same menu.
   └  ↑↓ move · enter select · ← back · ctrl+c quit
 ```
 
-| Step | What happens |
+| Шаг | Что происходит |
 |---|---|
-| **Domain** | validated on enter; the hint shows this server's public IP for the A record |
-| **DNS check** | *check now* or *skip*. The check runs right there; on a mismatch you see why and can **check again**, **change the domain** or **continue anyway** |
-| **Template** | arrow keys; the one matching the name (`*.cdn.*` → `cdn`, `*.api.*` → `api`, `*.s3.*` → `storage`, …) is pre-selected |
-| **Port** | loopback port for Xray's target, `8443` by default; a busy port is reported immediately |
-| **E-mail** | optional, for Let's Encrypt expiry notices |
-| **Options** | ufw rules · enable ufw · staging certificate · offer the node installer afterwards |
-| **Review** | every value on one screen, any line can be changed — **nothing on the server is touched before *Install*** |
+| **Domain** | домен проверяется сразу; в подсказке — публичный IP сервера, на который должна указывать A-запись |
+| **DNS check** | «проверить сейчас» или «пропустить». Проверка идёт прямо в окне; если запись не та — видно почему, и можно **проверить ещё раз**, **сменить домен** или **продолжить всё равно** |
+| **Template** | выбор стрелками; шаблон, подходящий по имени (`*.cdn.*` → `cdn`, `*.api.*` → `api`, `*.s3.*` → `storage`, …), выбран заранее |
+| **Port** | loopback-порт для `target` в Xray, по умолчанию `8443`; если он занят — мастер сразу скажет кем |
+| **E-mail** | необязательно, для писем Let's Encrypt об истечении сертификата |
+| **Options** | правила ufw · включить ufw · staging-сертификат · предложить установщик ноды в конце |
+| **Review** | все значения на одном экране, любое можно поменять — **до нажатия *Install* на сервере ничего не меняется** |
 
-Keys: `↑↓` move · `enter` select · `space` toggle · `←` back · `ctrl+c` quit.
+Клавиши: `↑↓` — перемещение · `enter` — выбор · `пробел` — галочка · `←` — назад · `ctrl+c` — выход.
 
-The main menu (`selfsteal` with no arguments) shows the current state and offers **Status, Re-configure,
-Template, Domain, Logs, Restart, Certificate, Update, Uninstall, Prepare**. An error in one action returns to
-the menu instead of closing it.
+Главное меню (`selfsteal` без аргументов) показывает текущее состояние и даёт **Status, Re-configure, Template,
+Domain, Logs, Restart, Certificate, Update, Uninstall, Prepare**. Ошибка в одном действии возвращает в меню,
+а не закрывает его.
 
-### Without the wizard
+### Без мастера
 
-For scripts and mass roll-outs everything is still available as options:
+Для скриптов и массовой раскатки всё по-прежнему доступно флагами:
 
 ```bash
 bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/latest/download/selfsteal.sh) @ install \
   --domain se1.cdn.popug.cloud --template cdn --yes
 ```
 
-`--yes`, no terminal, or `SELFSTEAL_NO_TUI=1` → nothing is asked. In a terminal, options given on the command
-line are pre-filled in the wizard; `install` with both `--domain` and `--template` skips it.
+С `--yes`, без терминала или с `SELFSTEAL_NO_TUI=1` ничего не спрашивается. В терминале флаги подставляются в
+мастер как готовые значения; если переданы и `--domain`, и `--template`, `install` идёт без мастера.
 
-## 🎭 Templates
+## 🎭 Шаблоны
 
-| Template | For | Typical hosts | Answers |
+| Шаблон | Для | Типичные хосты | Что отвечает |
 |---|---|---|---|
-| `cdn` | nodes | `se1.cdn.popug.cloud` | branded 404 on `/`, static files under `/assets/` |
-| `api` | nodes | `pl1.api.popug.cloud` | `{"service":"popug-api","status":"ok",…}`, JSON 401/404 |
-| `storage` | nodes | `us1.s3.popug.cloud` | S3-style XML: `AccessDenied`, `NoSuchBucket`, `InvalidBucketName` |
-| `registry` | nodes | `ru1.registry.popug.cloud` | short page, registry-style `401` on `/v2/` |
-| `default` | nodes | anything else | neutral “you have reached a Popug Cloud endpoint” page |
-| `root` | main server | `popug.cloud`, `www.popug.cloud` | landing page |
-| `docs` | main server | `docs.popug.cloud` | documentation: overview, quickstart, auth, storage, CDN, API, CLI |
-| `status` | main server | `status.popug.cloud` | status page with a 90-day history |
-| `console` | main server | `console.popug.cloud`, `auth.popug.cloud` | sign-in page and a “private beta” notice, no working form |
+| `cdn` | ноды | `se1.cdn.popug.cloud` | фирменная 404 на `/`, статика в `/assets/` |
+| `api` | ноды | `pl1.api.popug.cloud` | `{"service":"popug-api","status":"ok",…}`, JSON 401/404 |
+| `storage` | ноды | `us1.s3.popug.cloud` | XML в стиле S3: `AccessDenied`, `NoSuchBucket`, `InvalidBucketName` |
+| `registry` | ноды | `ru1.registry.popug.cloud` | короткая страница, `401` как у registry на `/v2/` |
+| `default` | ноды | всё остальное | нейтральная страница «you have reached a Popug Cloud endpoint» |
+| `root` | основной сервер | `popug.cloud`, `www.popug.cloud` | лендинг |
+| `docs` | основной сервер | `docs.popug.cloud` | документация: обзор, quickstart, auth, storage, CDN, API, CLI |
+| `status` | основной сервер | `status.popug.cloud` | статус-страница с историей за 90 дней |
+| `console` | основной сервер | `console.popug.cloud`, `auth.popug.cloud` | страница входа и «private beta», форма никуда не отправляет |
 
-Naming: `<country><n>.<role>.popug.cloud` — `cdn`: se1, se2, cz1, nl1, lv1, ee1, de1 · `api`: pl1, sg1 ·
-`s3`: us1, tr1 · `registry`: ru1. Main-server pages are added to an existing Caddy with `prepare`
-(see [DEPLOY.md §4](DEPLOY.md#4-the-main-domain-on-a-server-where-caddy-apt-already-runs)).
+Имена: `<страна><n>.<роль>.popug.cloud` — `cdn`: se1, se2, cz1, nl1, lv1, ee1, de1 · `api`: pl1, sg1 ·
+`s3`: us1, tr1 · `registry`: ru1. Страницы основного сервера добавляются в уже работающий Caddy через `prepare`
+(см. [DEPLOY.md §4](DEPLOY.md#4-the-main-domain-on-a-server-where-caddy-apt-already-runs)).
 
-Everything is static: no backend, no external fonts / CDNs / analytics, no JavaScript, no forms that send data.
+Всё статическое: без бэкенда, внешних шрифтов / CDN / аналитики, без JavaScript и без форм, которые что-то отправляют.
 
-### Every node looks a little different
+### Каждая нода немного отличается
 
-A seed (domain + machine-id) makes each installation unique but stable across re-installs:
+Seed (домен + machine-id) делает каждую установку уникальной, но стабильной при переустановке:
 
-- asset file names are hashed and references rewritten;
-- `Last-Modified` / `ETag` differ;
-- build id, API version, `HostId` in XML errors, dates and uptime history change;
-- the order of some lists changes;
-- no `Server` header anywhere (404s included), proper cache and security headers.
+- имена файлов ассетов заменяются хешами, ссылки переписываются;
+- разные `Last-Modified` / `ETag`;
+- меняются build id, версия API, `HostId` в XML-ошибках, даты и история аптайма;
+- порядок некоторых списков перемешан;
+- заголовка `Server` нет нигде (в том числе на 404), правильные заголовки кэша и безопасности.
 
-## ⌨️ Commands
+## ⌨️ Команды
 
 ```
-selfsteal                     interactive menu
-selfsteal install             install or re-apply (idempotent)
-selfsteal update [--to TAG]   newer installer + templates; settings and certificates are kept
-selfsteal status              state, container, listeners, certificate
+selfsteal                     интерактивное меню
+selfsteal install             установить или применить заново (идемпотентно)
+selfsteal update [--to TAG]   новый установщик и шаблоны; настройки и сертификаты сохраняются
+selfsteal status              состояние, контейнер, порты, сертификат
 selfsteal logs [-f] [--tail N]
 selfsteal restart
-selfsteal template [NAME]     switch the template (no NAME → picker)
-selfsteal domain [NAME]       switch the domain (no NAME → wizard with DNS check)
-selfsteal cert                discard and re-issue the certificate
-selfsteal uninstall [--purge] remove the site (--purge also deletes certificates)
-selfsteal templates           list templates
-selfsteal prepare             only unpack a template for an EXISTING Caddy
+selfsteal template [NAME]     сменить шаблон (без NAME — выбор из списка)
+selfsteal domain [NAME]       сменить домен (без NAME — мастер с проверкой DNS)
+selfsteal cert                выбросить сертификат и выпустить заново
+selfsteal uninstall [--purge] удалить сайт (--purge — вместе с сертификатами)
+selfsteal templates           список шаблонов
+selfsteal prepare             только распаковать шаблон для УЖЕ установленного Caddy
 ```
 
 <details>
-<summary><b>All options</b></summary>
+<summary><b>Все флаги</b></summary>
 
-| Option | Meaning |
+| Флаг | Значение |
 |---|---|
-| `--domain NAME` | node host name (A/AAAA must point to this server) |
-| `--template NAME` | template to serve |
-| `--port N` | loopback port for Xray's target (default `8443`) |
-| `--email ADDR` | contact e-mail for the certificate authority |
-| `--staging` | Let's Encrypt staging CA for this run (tests) |
-| `--skip-dns-check` | do not verify the DNS records |
-| `--no-ufw` / `--enable-ufw` | do not touch the firewall / install and enable ufw |
-| `--with-node` | afterwards offer to run the third-party `remnanode.sh` (downloaded and run as root, **not verified**) |
-| `--seed STRING` | randomization seed |
-| `--purge` | with `uninstall`: also delete certificates and volumes |
-| `--out DIR`, `--mode public\|node` | for `prepare` |
-| `-y`, `--yes` | never ask; fail if something required is missing |
+| `--domain NAME` | домен ноды (A/AAAA должны указывать на этот сервер) |
+| `--template NAME` | какой шаблон отдавать |
+| `--port N` | loopback-порт для `target` в Xray (по умолчанию `8443`) |
+| `--email ADDR` | контактный e-mail для удостоверяющего центра |
+| `--staging` | тестовый CA Let's Encrypt на этот запуск |
+| `--skip-dns-check` | не проверять DNS-записи |
+| `--no-ufw` / `--enable-ufw` | не трогать фаервол / установить и включить ufw |
+| `--with-node` | в конце предложить запустить сторонний `remnanode.sh` (качается и запускается от root, **не проверяется**) |
+| `--seed STRING` | seed для рандомизации |
+| `--purge` | с `uninstall`: удалить ещё и сертификаты, и volumes |
+| `--out DIR`, `--mode public\|node` | для `prepare` |
+| `-y`, `--yes` | ничего не спрашивать; ошибка, если чего-то не хватает |
 
-Every option also works as `SELFSTEAL_<NAME>` (for example `SELFSTEAL_DOMAIN`).
+Любой флаг можно задать и переменной `SELFSTEAL_<NAME>` (например, `SELFSTEAL_DOMAIN`).
 
 </details>
 
-## 📦 What gets installed
+## 📦 Что устанавливается
 
 | | |
 |---|---|
-| Web server | official `caddy` image pinned by digest, Docker Compose, `network_mode: host` |
-| Docker | from the official apt repository, only if missing |
-| Files | `/opt/selfsteal/` — `docker-compose.yml`, `Caddyfile`, `snippet.caddy`, `site/`, `state.env` |
-| Command | `/usr/local/bin/selfsteal` |
-| Listens on | `127.0.0.1:8443` (TLS, for Xray) and `:80` (certificate challenge + redirect) |
-| Certificate | Let's Encrypt, HTTP-01, exactly the node's domain (TLS-ALPN off — 443 belongs to Xray) |
-| Firewall | ufw only: ssh (detected), 80, 443. Existing rules are never reset |
+| Веб-сервер | официальный образ `caddy`, закреплён по digest; Docker Compose, `network_mode: host` |
+| Docker | из официального apt-репозитория, только если его нет |
+| Файлы | `/opt/selfsteal/` — `docker-compose.yml`, `Caddyfile`, `snippet.caddy`, `site/`, `state.env` |
+| Команда | `/usr/local/bin/selfsteal` |
+| Слушает | `127.0.0.1:8443` (TLS, для Xray) и `:80` (проверка для сертификата + редирект) |
+| Сертификат | Let's Encrypt, HTTP-01, ровно на домен ноды (TLS-ALPN выключен — 443 у Xray) |
+| Фаервол | только ufw: ssh (определяется сам), 80, 443. Существующие правила не сбрасываются |
 
-Requirements: Debian 12+ or Ubuntu 22.04+, root, free port 80, a domain pointing to the server.
+Требования: Debian 12+ или Ubuntu 22.04+, root, свободный порт 80, домен, указывающий на сервер.
 
-## 🔄 Updating
+## 🔄 Обновление
 
-On a node: `selfsteal update` (or **Update** in the menu) fetches the installer of the latest release and
-re-applies the site; domain, template, port and certificates are kept. Pin a version with `--to 0.2.0`.
-For servers using `prepare`, re-run it and reload Caddy. Details: [DEPLOY.md §5](DEPLOY.md#5-updating-templates-on-all-servers).
+На ноде: `selfsteal update` (или **Update** в меню) — скачивает установщик последнего релиза и заново применяет
+сайт; домен, шаблон, порт и сертификаты сохраняются. Конкретная версия: `--to 0.2.1`. На серверах с `prepare`
+перезапусти `prepare` и сделай reload Caddy. Подробнее — [DEPLOY.md §5](DEPLOY.md#5-updating-templates-on-all-servers).
 
-## 🔒 Integrity and safety
+## ♻️ Переустановка и удаление
 
-- Template archives come from the GitHub release of the **same version** as the installer and are checked against
-  SHA256 values embedded in it; a mismatch aborts without touching the site.
-- The installer's own checksum is in `SHA256SUMS` of every release.
-- The Caddy image is pinned by digest.
-- No secrets in URLs, arguments, logs or state files; Reality keys stay in the panel.
+Если команды `selfsteal` на ноде нет (например, старая установка оборвалась до её появления), всё то же самое
+делается напрямую через скрипт из релиза:
 
-## 🛠 Development
+```bash
+# поставить заново поверх старой версии — настройки из /opt/selfsteal подхватятся
+bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/latest/download/selfsteal.sh) @ install
+
+# снести полностью (вместе с сертификатами), потом поставить с нуля
+bash <(curl -Ls https://github.com/Popugtop/popug-cloud-selfsteal/releases/latest/download/selfsteal.sh) @ uninstall --purge
+```
+
+Если на ноде стоит selfsteal **другого** скрипта (обычно контейнер вроде `caddy-selfsteal` в `/opt/caddy`) —
+останови его и поставь этот, см. [DEPLOY.md §2.6](DEPLOY.md#26-moving-from-another-self-steal-setup).
+
+## 🔒 Целостность и безопасность
+
+- Архивы шаблонов качаются из GitHub-релиза **той же версии**, что и установщик, и сверяются с SHA256,
+  зашитыми в него; при несовпадении установка прерывается, сайт не трогается.
+- Контрольная сумма самого установщика есть в `SHA256SUMS` каждого релиза.
+- Образ Caddy закреплён по digest.
+- Никаких секретов в URL, аргументах, логах и state-файлах; ключи Reality остаются в панели.
+
+## 🛠 Разработка
 
 ```bash
 npm install
 node tools/build-release.mjs --repo Popugtop/popug-cloud-selfsteal   # → release/
-test/gallery.sh                                   # screenshots of every page → docs/gallery/
-test/e2e/run.sh                                   # full installer test: clean Debian 12 + Pebble (needs Docker)
-test/e2e/existing-caddy.sh debian|cloudsmith      # `prepare` against an apt Caddy
+test/gallery.sh                                   # скриншоты всех страниц → docs/gallery/
+test/e2e/run.sh                                   # полный тест установщика: чистый Debian 12 + Pebble (нужен Docker)
+test/e2e/existing-caddy.sh debian|cloudsmith      # `prepare` против Caddy из apt
 ```
 
-The end-to-end tests issue real certificates from a local ACME server (Pebble) and never contact Let's Encrypt.
-Shell scripts are kept clean under `shellcheck -S style`. Publishing a release: [DEPLOY.md §1](DEPLOY.md#1-publishing-a-release).
+E2E-тесты выпускают настоящие сертификаты через локальный ACME-сервер (Pebble) и никогда не обращаются к
+Let's Encrypt. Shell-скрипты чисты под `shellcheck -S style`. Как выпустить релиз — [DEPLOY.md §1](DEPLOY.md#1-publishing-a-release).
 
 <details>
-<summary><b>Repository layout</b></summary>
+<summary><b>Структура репозитория</b></summary>
 
 ```
-packages/design/   design tokens and shared components (Astro)
-sites/root/        the popug.cloud landing page
-templates/<name>/  one directory per template (+ caddy/Caddyfile.snippet, template.json)
-installer/         selfsteal.sh (release data is embedded at build time)
-tools/             build-release.mjs (archives, checksums, installer), randomize.sh
+packages/design/   дизайн-токены и общие компоненты (Astro)
+sites/root/        лендинг popug.cloud
+templates/<name>/  по каталогу на шаблон (+ caddy/Caddyfile.snippet, template.json)
+installer/         selfsteal.sh (данные релиза вшиваются при сборке)
+tools/             build-release.mjs (архивы, суммы, установщик), randomize.sh
 test/              serve.sh, curl-all.sh, shoot.mjs, gallery.sh, e2e/
 ```
 
