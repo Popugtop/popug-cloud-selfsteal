@@ -37,9 +37,9 @@ embedded. The archives are reproducible: building twice gives identical files.
 Publish with the GitHub CLI (or upload the same files in the web UI):
 
 ```bash
-git tag v0.2.1 && git push origin v0.2.1
-gh release create v0.2.1 release/* --repo Popugtop/popug-cloud-selfsteal \
-  --title "v0.2.1" --notes "Templates and installer v0.2.1"
+git tag v0.2.2 && git push origin v0.2.2
+gh release create v0.2.2 release/* --repo Popugtop/popug-cloud-selfsteal \
+  --title "v0.2.2" --notes "Templates and installer v0.2.2"
 ```
 
 Rules:
@@ -50,7 +50,7 @@ Rules:
 * Never rebuild and replace files of a published tag: nodes pin the hashes of that exact build.
   Changed something? Bump the version, rebuild, publish a new tag.
 * Sanity check after publishing, from any machine:
-  `curl -sL https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.2.1/selfsteal.sh | sha256sum`
+  `curl -sL https://github.com/Popugtop/popug-cloud-selfsteal/releases/download/v0.2.2/selfsteal.sh | sha256sum`
   must equal the `selfsteal.sh` line of `SHA256SUMS`.
 
 Before the first `git push`, keep working files out of the repository. A suggested `.gitignore` already

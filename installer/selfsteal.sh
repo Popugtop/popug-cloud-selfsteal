@@ -608,6 +608,11 @@ run_action() { # run a command in a subshell: an error ends the command, not the
   set -e; trap 'on_err "$LINENO" "$?"' ERR
 }
 
+menu_label() { # menu_label VALUE "value|label|desc"... -> label
+  local v=$1 i; shift
+  for i in "$@"; do [ "${i%%|*}" != "$v" ] || { i=${i#*|}; printf '%s' "${i%%|*}"; return; }; done
+}
+
 cmd_menu() {
   tui_available || { usage; return 0; }
   need_root
@@ -641,6 +646,11 @@ cmd_menu() {
     ui_init
     ui_select "What do you want to do?" "$state" 0 "${items[@]}"
     ui_end
+    # every action starts on a clean screen instead of below the output of the previous one
+    if [ "$UI_RES" != quit ]; then
+      printf '\033[H\033[2J\033[3J'
+      [ "$UI_RES" = install ] || banner "$(menu_label "$UI_RES" "${items[@]}")"   # install prints its own
+    fi
     case "$UI_RES" in
       quit) return 0 ;;
       install) run_action cmd_install ;;
@@ -759,6 +769,10 @@ ensure_docker() {
 }
 
 compose() { (cd "$APP_DIR" && docker compose "$@"); }
+composeq() { # compose without its progress output; the output is shown only if it fails
+  local out
+  if ! out=$(compose "$@" 2>&1); then printf '%s\n' "$out" | tail -n 15 >&2; return 1; fi
+}
 
 # ---------------------------------------------------------------- state -----
 load_state() {
@@ -1040,13 +1054,13 @@ start_site() {
   validate_config
   local was_running=0
   [ "$(docker inspect -f '{{.State.Running}}' "$CONTAINER" 2>/dev/null)" = "true" ] && was_running=1
-  compose up -d --remove-orphans >/dev/null
+  composeq up -d --remove-orphans
   if [ "$was_running" -eq 1 ]; then
     if [ "$NEED_RESTART" -eq 1 ]; then
-      compose restart caddy >/dev/null
+      composeq restart caddy
     elif [ "$(probe_site)" = "000" ]; then
       info "no certificate yet — restarting Caddy to retry issuance now"
-      compose restart caddy >/dev/null
+      composeq restart caddy
     fi
   fi
   NEED_RESTART=0
@@ -1234,7 +1248,7 @@ cmd_logs() {
   compose "${a[@]}" caddy
 }
 
-cmd_restart() { need_root; require_installed; compose restart caddy >/dev/null; ok "restarted"; }
+cmd_restart() { need_root; require_installed; composeq restart caddy; ok "restarted"; }
 
 cmd_template() {
   need_root; require_installed; load_state
@@ -1289,9 +1303,9 @@ cmd_cert() {
   need_root; require_installed; load_state
   valid_domain "$DOMAIN" || die "invalid domain in state"
   warn "discarding the stored certificate for $DOMAIN and requesting a new one"
-  compose stop caddy >/dev/null
-  compose run --rm --no-deps --entrypoint sh caddy -c "rm -rf /data/caddy/certificates/*/$DOMAIN" >/dev/null
-  compose up -d >/dev/null
+  composeq stop caddy
+  composeq run --rm --no-deps --entrypoint sh caddy -c "rm -rf /data/caddy/certificates/*/$DOMAIN"
+  composeq up -d
   wait_ready
   cert_info | sed 's/^/  /'
 }
